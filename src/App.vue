@@ -147,3 +147,11 @@ main.with-navbar {
   100% { transform: rotate(360deg); }
 }
 </style>
+/* Blur y oscurecer fondo cuando hay modal abierto */
+body.modal-open main {
+  filter: blur(3px);
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
