@@ -10,7 +10,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/home'
     },
     {
       path: '/login',
@@ -35,7 +35,7 @@ const router = createRouter({
       name: 'Home',
       component: HomeView,
       meta: { 
-        requiresAuth: true,
+        requiresAuth: false,
         title: 'Inicio - ADWEB Online'
       }
     },
@@ -71,28 +71,14 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title
   }
 
-  // Verificar autenticación
+  // Verificar autenticación solo para rutas protegidas
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  
-  if (requiresAuth) {
-    // Aquí se verificará el estado de autenticación con Firebase
-    // Por ahora, redirigir a login si la ruta requiere autenticación
-    const isAuthenticated = false // Esto será manejado por el store de autenticación
-    
-    if (!isAuthenticated) {
-      next('/login')
-    } else {
-      next()
-    }
+  const isAuthenticated = localStorage.getItem('dev_isAuthenticated') === 'true'
+
+  if (requiresAuth && !isAuthenticated) {
+    next('/login')
   } else {
-    // Si el usuario está autenticado y trata de acceder a login/registro, redirigir a home
-    const isAuthenticated = false // Esto será manejado por el store de autenticación
-    
-    if (isAuthenticated && (to.path === '/login' || to.path === '/registro')) {
-      next('/home')
-    } else {
-      next()
-    }
+    next()
   }
 })
 

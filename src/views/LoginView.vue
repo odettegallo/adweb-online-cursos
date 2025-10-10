@@ -88,6 +88,18 @@
                 {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
               </button>
 
+              <!-- Quick Login Buttons for Development -->
+              <div class="d-grid gap-2 mb-3">
+                <button type="button" class="btn btn-outline-primary" @click="quickAdminLogin">
+                  <i class="bi bi-person-badge me-2"></i>
+                  Entrar como Admin (prueba)
+                </button>
+                <button type="button" class="btn btn-outline-secondary" @click="quickUserLogin">
+                  <i class="bi bi-person me-2"></i>
+                  Entrar como Usuario (prueba)
+                </button>
+              </div>
+
               <!-- Error Message -->
               <div v-if="generalError" class="alert alert-danger" role="alert">
                 <i class="bi bi-exclamation-triangle me-2"></i>
@@ -217,6 +229,21 @@ export default {
       } finally {
         this.isLoading = false
       }
+    }
+    ,
+    quickAdminLogin() {
+      // Perfil temporal de desarrollo
+      localStorage.setItem('dev_isAuthenticated', 'true')
+      localStorage.setItem('dev_role', 'Admin')
+      localStorage.setItem('dev_email', 'admin@dev.local')
+      this.$router.push('/home')
+    },
+    quickUserLogin() {
+      // Perfil temporal de desarrollo
+      localStorage.setItem('dev_isAuthenticated', 'true')
+      localStorage.setItem('dev_role', 'Usuario')
+      localStorage.setItem('dev_email', 'usuario@dev.local')
+      this.$router.push('/home')
     }
   }
 }

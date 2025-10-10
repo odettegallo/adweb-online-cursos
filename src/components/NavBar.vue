@@ -95,12 +95,25 @@ export default {
       console.log('Logout functionality will be implemented with Firebase')
       // Aquí se llamará al método de Firebase signOut()
       // y se actualizará el estado en el store
+      // Desarrollo: limpiar perfil temporal
+      localStorage.removeItem('dev_isAuthenticated')
+      localStorage.removeItem('dev_role')
+      localStorage.removeItem('dev_email')
+      this.isAuthenticated = false
+      this.userEmail = ''
+      this.$router.push('/login')
     }
   },
   mounted() {
     // Aquí se verificará el estado de autenticación con Firebase
     // onAuthStateChanged listener será implementado aquí
     console.log('Auth state listener will be implemented with Firebase')
+    // Desarrollo: leer autenticación temporal
+    const devAuth = localStorage.getItem('dev_isAuthenticated') === 'true'
+    const email = localStorage.getItem('dev_email')
+    const role = localStorage.getItem('dev_role') || 'Usuario'
+    this.isAuthenticated = devAuth
+    this.userEmail = email || (role === 'Admin' ? 'admin@dev.local' : 'usuario@dev.local')
   }
 }
 </script>
