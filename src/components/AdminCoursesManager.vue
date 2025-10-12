@@ -45,7 +45,10 @@
           <div class="col-md-2">
             <input type="number" class="form-control" v-model.number="newCourse.inscritos" placeholder="Inscritos" />
           </div>
-          <div class="col-md-8 d-flex justify-content-end">
+          <div class="col-md-5">
+            <input type="text" class="form-control" v-model="newCourse.imageUrl" placeholder="URL de la imagen (opcional)" />
+          </div>
+          <div class="col-md-3 d-flex justify-content-end">
             <button class="btn btn-primary" @click="addCourse">
               <i class="bi bi-plus-lg me-1"></i>Agregar
             </button>
@@ -97,7 +100,6 @@
         </table>
       </div>
 
-      <!-- Modal de edición -->
       <div class="modal fade" tabindex="-1" ref="editModal">
         <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content">
@@ -136,6 +138,10 @@
                 <div class="col-12">
                   <label class="form-label">Descripción</label>
                   <textarea class="form-control" v-model="editCache.description" rows="3"></textarea>
+                </div>
+                <div class="col-12">
+                  <label class="form-label">URL de Imagen</label>
+                  <input type="text" class="form-control" v-model="editCache.imageUrl" placeholder="URL de la imagen" />
                 </div>
               </div>
               <hr />
@@ -182,8 +188,8 @@ export default {
       searchTerm: '',
       filterStatus: '',
       statuses: ['disponible', 'cerrado', 'en_revision'],
-      newCourse: { code: '', name: '', status: '', price: 0, duration: '', description: '', cupos: 0, inscritos: 0 },
-      editCache: { id: '', code: '', name: '', status: 'disponible', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, assignedMembers: [] },
+      newCourse: { code: '', name: '', status: '', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, imageUrl: '' },
+      editCache: { id: '', code: '', name: '', status: 'disponible', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, assignedMembers: [], imageUrl: '' },
       memberToAdd: '',
       editModalInstance: null
     }
@@ -201,12 +207,19 @@ export default {
       })
     }
   },
+  mounted() {
+    // Inicializar el modal al montar el componente
+    this.editModalInstance = new Modal(this.$refs.editModal, {
+      backdrop: 'static', 
+      keyboard: false
+    });
+  },
   methods: {
     currency(val) {
-      return new Intl.NumberFormat('es-PE', { style: 'currency', currency: 'PEN' }).format(val || 0)
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(val || 0)
     },
     addCourse() {
-      const { code, name, status, price, duration, description, cupos, inscritos } = this.newCourse
+      const { code, name, status, price, duration, description, cupos, inscritos, imageUrl } = this.newCourse
       if (!code || !name || !status) return
       const newItem = {
         id: 'c_' + Math.random().toString(36).slice(2, 9),
@@ -218,21 +231,19 @@ export default {
         description,
         cupos: Number(cupos) || 0,
         inscritos: Number(inscritos) || 0,
-        assignedMembers: []
+        assignedMembers: [],
+        imageUrl: imageUrl || 'https://picsum.photos/id/' + (Math.floor(Math.random() * 999) + 1) + '/800/600'
       }
       const updated = [newItem, ...this.courses]
       this.$emit('courses-change', updated)
-      this.newCourse = { code: '', name: '', status: '', price: 0, duration: '', description: '', cupos: 0, inscritos: 0 }
+      this.newCourse = { code: '', name: '', status: '', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, imageUrl: '' }
     },
     openEdit(course) {
       this.editCache = JSON.parse(JSON.stringify(course))
-      if (!this.editModalInstance) {
-        this.editModalInstance = new Modal(this.$refs.editModal)
-      }
       this.editModalInstance.show()
     },
     closeEdit() {
-      if (this.editModalInstance) this.editModalInstance.hide()
+      this.editModalInstance.hide()
       this.memberToAdd = ''
     },
     saveEdit() {
