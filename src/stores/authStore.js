@@ -4,7 +4,7 @@ import {createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged } from "firebase/auth";
-  import router from "./index";
+  import router from "../router/index";
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
