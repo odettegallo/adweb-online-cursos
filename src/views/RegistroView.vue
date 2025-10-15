@@ -200,6 +200,9 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/authStore'
+
+
 export default {
   name: 'RegistroView',
   data() {
@@ -292,11 +295,10 @@ export default {
       
       try {
         // Aquí se implementará la lógica de Firebase createUserWithEmailAndPassword
-        console.log('Register attempt with:', {
-          name: this.formData.name,
-          email: this.formData.email,
-          password: this.formData.password
-        })
+        const authStore = useAuthStore()
+        await authStore.registerUser(this.formData.email, this.formData.password, this.formData.name)
+
+      
         
         // Simulación de delay para mostrar loading
         await new Promise(resolve => setTimeout(resolve, 1500))
@@ -312,6 +314,15 @@ export default {
         
       } catch (error) {
         console.error('Register error:', error)
+        if (error === 'auth/email-already-in-use') {
+          this.generalError = 'El correo electrónico ya está en uso'
+        } else if (error === 'auth/invalid-email') {
+          this.generalError = 'El correo electrónico no es válido'
+        } else if (error === 'auth/weak-password') {
+          this.generalError = 'La contraseña es demasiado débil'
+        } else {
+          this.generalError = 'Error al crear la cuenta. Intenta nuevamente.'
+        }
         this.generalError = 'Error al crear la cuenta. Intenta nuevamente.'
       } finally {
         this.isLoading = false
