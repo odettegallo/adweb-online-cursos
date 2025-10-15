@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <!-- NavBar se muestra solo en rutas que no sean login o registro -->
     <NavBar v-if="showNavBar" />
     
-    <!-- Contenido principal -->
     <main :class="{ 'with-navbar': showNavBar }">
       <RouterView />
     </main>
@@ -12,6 +10,7 @@
 
 <script>
 import NavBar from './components/NavBar.vue'
+import { useAuthStore } from '@/stores/authStore' // Importar el store
 
 export default {
   name: 'App',
@@ -24,9 +23,17 @@ export default {
       const hiddenRoutes = ['/login', '/registro']
       return !hiddenRoutes.includes(this.$route.path)
     }
+  },
+  // CLAVE: Suscribirse al estado de autenticación de Firebase
+  created() {
+    const authStore = useAuthStore();
+    // Inicia el listener. Esto actualiza el estado del store y maneja
+    // la redirección inicial si el usuario ya está logueado.
+    authStore.subscribeToAuthState();
   }
 }
 </script>
+
 
 <style>
 /* Estilos globales */

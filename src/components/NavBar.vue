@@ -1,26 +1,9 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-purple shadow-sm">
     <div class="container">
-      <router-link class="navbar-brand fw-bold" to="/">
-        <i class="bi bi-mortarboard-fill me-2"></i>
-        ADWEB Online
-      </router-link>
-
-      <button 
-        class="navbar-toggler" 
-        type="button" 
-        data-bs-toggle="collapse" 
-        data-bs-target="#navbarNav"
-        aria-controls="navbarNav" 
-        aria-expanded="false" 
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
-          <li class="nav-item" v-if="isAuthenticated">
+          <li class="nav-item" v-if="isAuthenticated"> 
             <router-link class="nav-link" to="/home">
               <i class="bi bi-house-fill me-1"></i>
               Inicio
@@ -38,7 +21,7 @@
           <div v-if="isAuthenticated" class="d-flex align-items-center">
             <span class="navbar-text me-3">
               <i class="bi bi-person-circle me-1"></i>
-              {{ userEmail }}
+              {{ userEmail }} 
             </span>
             <button 
               class="btn btn-outline-light btn-sm" 
@@ -49,67 +32,43 @@
               Cerrar Sesión
             </button>
           </div>
-
-          <div v-else class="d-flex gap-2">
-            <router-link 
-              class="btn btn-outline-light btn-sm" 
-              to="/login"
-            >
-              <i class="bi bi-box-arrow-in-right me-1"></i>
-              Iniciar Sesión
-            </router-link>
-            <router-link 
-              class="btn btn-light btn-sm text-purple fw-bold" 
-              to="/registro"
-            >
-              <i class="bi bi-person-plus me-1"></i>
-              Registrarse
-            </router-link>
           </div>
-        </div>
       </div>
     </div>
   </nav>
 </template>
 
 <script>
+// 1. Importar las herramientas de Pinia
+import { useAuthStore } from '@/stores/authStore';
+import { mapState, mapActions } from 'pinia';
+
 export default {
   name: 'NavBar',
-  data() {
-    return {
-      // Estos valores serán manejados por el store cuando se integre Firebase
-      isAuthenticated: false,
-      userEmail: ''
-    }
+  // Elimina 'data()' y 'created()' si contenían lógica de autenticación temporal.
+  
+  // 2. Mapear el estado del store a propiedades computadas del componente
+  computed: {
+    ...mapState(useAuthStore, {
+      // Mapea el getter 'isLoggedIn' del store al 'isAuthenticated' del template
+      isAuthenticated: 'isLoggedIn',     
+      // Mapea el getter 'currentUserEmail' del store al 'userEmail' del template
+      userEmail: 'currentUserEmail'      
+    })
   },
   methods: {
+    // 3. Mapear la acción de logout del store a un método del componente
+    ...mapActions(useAuthStore, ['logoutUser']),
+
     handleLogout() {
-      // Método para cerrar sesión - será implementado con Firebase
-      console.log('Logout functionality will be implemented with Firebase')
-      // Aquí se llamará al método de Firebase signOut()
-      // y se actualizará el estado en el store
-      // Desarrollo: limpiar perfil temporal
-      localStorage.removeItem('dev_isAuthenticated')
-      localStorage.removeItem('dev_role')
-      localStorage.removeItem('dev_email')
-      this.isAuthenticated = false
-      this.userEmail = ''
-      this.$router.push('/login')
+      // 4. Llama a la acción mapeada, la cual ejecuta el signOut y la redirección
+      this.logoutUser();
     }
-  },
-  mounted() {
-    // Aquí se verificará el estado de autenticación con Firebase
-    // onAuthStateChanged listener será implementado aquí
-    console.log('Auth state listener will be implemented with Firebase')
-    // Desarrollo: leer autenticación temporal
-    const devAuth = localStorage.getItem('dev_isAuthenticated') === 'true'
-    const email = localStorage.getItem('dev_email')
-    const role = localStorage.getItem('dev_role') || 'Usuario'
-    this.isAuthenticated = devAuth
-    this.userEmail = email || (role === 'Admin' ? 'admin@dev.local' : 'usuario@dev.local')
   }
 }
 </script>
+
+
 
 <style scoped>
 /* ESTILOS DE COLOR MODIFICADOS */
