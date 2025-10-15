@@ -151,6 +151,8 @@
 </template>
 
 <script>
+import { useAuthStore } from '@/stores/authStore';
+
 export default {
   name: 'LoginView',
   data() {
@@ -207,19 +209,15 @@ export default {
       
       try {
         // Aquí se implementará la lógica de Firebase signInWithEmailAndPassword
-        console.log('Login attempt with:', {
-          email: this.formData.email,
-          password: this.formData.password,
-          rememberMe: this.formData.rememberMe
-        })
-        
-        // Simulación de delay para mostrar loading
-        await new Promise(resolve => setTimeout(resolve, 1000))
-        
-        // Aquí se llamará a Firebase Auth
-        // const userCredential = await signInWithEmailAndPassword(auth, this.formData.email, this.formData.password)
-        // Redirigir al usuario después del login exitoso
-        // this.$router.push('/home')
+        const authStore = useAuthStore()
+        await authStore.loginUser(this.formData.email, this.formData.password)
+
+          // Redirigir al usuario a la página principal después del login exitoso
+          this.$router.push('/home')
+          
+          // Desarrollo: mostrar mensaje de éxito temporal
+          // alert('Login successful! Firebase integration will be implemented.')
+          //
         
         this.generalError = 'Firebase authentication will be implemented here'
         
