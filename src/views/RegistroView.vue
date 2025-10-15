@@ -310,8 +310,9 @@ export default {
         // Redirigir al usuario después del registro exitoso
         // this.$router.push('/home')
         
-        this.successMessage = 'Cuenta creada exitosamente. Firebase será implementado aquí.'
-        
+        this.successMessage = 'Cuenta creada exitosamente.'
+        this.$router.push('/home')
+
       } catch (error) {
         console.error('Register error:', error)
         if (error === 'auth/email-already-in-use') {
