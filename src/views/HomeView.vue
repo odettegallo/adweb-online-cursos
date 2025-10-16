@@ -26,120 +26,54 @@
 <script>
 import AdminCoursesManager from '@/components/AdminCoursesManager.vue'
 import UserCoursesList from '@/components/UserCoursesList.vue'
+import { useCoursesStore } from '@/stores/coursesStore';
+import { onMounted, onUnmounted, computed } from 'vue';
 
 export default {
   name: 'HomeView',
   components: { AdminCoursesManager, UserCoursesList },
-  data() {
-    return {
-      role: 'Usuario',
-      currentEmail: '',
-      courses: []
-    }
-  },
-  created() {
-    // Cargar perfil desde localStorage (temporal para desarrollo)
-    const savedRole = localStorage.getItem('dev_role')
-    if (savedRole) {
-      this.role = savedRole
-    }
-    const devEmail = localStorage.getItem('dev_email')
-    if (devEmail) {
-      this.currentEmail = devEmail
-    }
-    // Cargar cursos (persistidos en localStorage)
-    this.loadCourses()
-  },
-  methods: {
-    // La función ahora devuelve el array de cursos base, no lo asigna a this.courses
-    seedInitialCourses() {
-      // Estructura preparada para futura migración a Firebase (¡URLs de imagen aquí!)
-      return [
-        { 
-          id: 'c1', code: 'CUR-001', name: 'HTML y CSS', status: 'disponible', price: 0, 
-          duration: '8h', description: 'Fundamentos del maquetado web.', cupos: 30, inscritos: 15, 
-          assignedMembers: ['usuario@dev.local'],
-          imageUrl: 'https://www.gilsys.com/_astro/html-css-logo.C2cnsBrF.png'
-        },
-        { 
-          id: 'c2', code: 'CUR-002', name: 'JavaScript Avanzado', status: 'en_revision', price: 49, 
-          duration: '12h', description: 'Closures, módulos y buenas prácticas.', cupos: 25, inscritos: 20, 
-          assignedMembers: [],
-          imageUrl: 'https://media.licdn.com/dms/image/v2/D4E12AQFfe1nZbaWdMw/article-cover_image-shrink_720_1280/article-cover_image-shrink_720_1280/0/1698604163003?e=2147483647&v=beta&t=zrcrB8lfoVmZo0LcSLgut3A_4PwE6YFe9EK3iy17L2Y'
-        },
-        { 
-          id: 'c3', code: 'CUR-003', name: 'Vue 3 con Composition API', status: 'disponible', price: 59, 
-          duration: '10h', description: 'Construye SPA modernas con Vue.', cupos: 40, inscritos: 32, 
-          assignedMembers: ['usuario@dev.local', 'admin@dev.local'],
-          imageUrl: 'https://media.licdn.com/dms/image/v2/C4E12AQFNIzHMgpSTEQ/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1600742697451?e=2147483647&v=beta&t=-GvDPJXKOJz5cnjhjTR0xvtF22xMCPU3o2ZFUOfXTas'
-        },
-        { 
-          id: 'c4', code: 'CUR-004', name: 'Node.js y Express', status: 'cerrado', price: 69, 
-          duration: '14h', description: 'APIs REST y servidores eficientes.', cupos: 20, inscritos: 20, 
-          assignedMembers: ['admin@dev.local'],
-          imageUrl: 'https://qualitapps.com/wp-content/uploads/2023/02/102.png'
-        },
-        { 
-          id: 'c5', code: 'CUR-005', name: 'Bases de Datos SQL', status: 'disponible', price: 39, 
-          duration: '9h', description: 'Modelado y consultas eficientes.', cupos: 35, inscritos: 10, 
-          assignedMembers: [],
-          imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Sql_data_base_with_logo.png'
-        }
-      ]
-    },
-    loadCourses() {
-      const stored = localStorage.getItem('courses')
-      
-      const baseCourses = this.seedInitialCourses()
+  setup() {
+    // 1. Inicializar Pinia Store
+    const coursesStore = useCoursesStore();
+    let unsubscribe = null; 
+    
+    // Simular datos de usuario (se mantiene la lógica local)
+    const role = localStorage.getItem('dev_role') || 'Usuario';
+    const currentEmail = localStorage.getItem('dev_email') || '';
 
-      if (stored) {
-        try {
-          const storedCourses = JSON.parse(stored)
-          
-          const baseMap = baseCourses.reduce((map, course) => {
-            map[course.id] = course
-            return map
-          }, {})
-          
-          this.courses = storedCourses.map(storedCourse => {
-            const baseCourse = baseMap[storedCourse.id] || {}
-            
-            return {
-              ...baseCourse,
-              ...storedCourse,
-              imageUrl: baseCourse.imageUrl || storedCourse.imageUrl
-            }
-          })
-          
-          if (this.courses.length === 0 || this.courses.length !== baseCourses.length) {
-              this.courses = baseCourses
-              this.saveCourses()
-          }
+    // 2. Iniciar y Detener Suscripción a Firebase
+    onMounted(() => {
+      // Iniciar la suscripción a cursos (onSnapshot) al montar el componente
+      // Esto hará que el store se llene con los datos de Firebase en tiempo real.
+      unsubscribe = coursesStore.subscribeToCourses();
+    });
 
-        } catch (e) {
-          console.error('Error parsing courses from localStorage', e)
-          this.courses = baseCourses
-          this.saveCourses()
-        }
-      } else {
-        this.courses = baseCourses
-        this.saveCourses()
+    onUnmounted(() => {
+      // Desuscribirse cuando el componente se destruye
+      if (unsubscribe) {
+        unsubscribe();
       }
-    },
-    saveCourses() {
-      // Guardar el estado actual de los cursos en localStorage
-      localStorage.setItem('courses', JSON.stringify(this.courses))
-    },
-    updateCourses(updated) {
-      this.courses = updated
-      this.saveCourses()
-    },
-    handleRoleChange() {
-      localStorage.setItem('dev_role', this.role)
+    });
+
+    // 3. Obtener Cursos y Estado desde el Store
+    const courses = computed(() => coursesStore.getCourses);
+
+    return {
+      // Datos de usuario
+      role,
+      currentEmail,
+      // Datos de Pinia Store (reactivos)
+      courses,
+      loading: computed(() => coursesStore.loading),
+      error: computed(() => coursesStore.error),
     }
-  }
+  },
+  
+  // Se eliminan los métodos y propiedades de data/created relacionados con localStorage y datos mock
+  // ... (Se eliminan data, created, methods: seedInitialCourses, loadCourses, saveCourses, updateCourses, handleRoleChange)
 }
-</script>
+  
+</script setup>
 
 <style scoped>
 .home-container {
