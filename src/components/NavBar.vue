@@ -1,6 +1,11 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-purple shadow-sm">
     <div class="container">
+      <router-link class="navbar-brand fw-bold" to="/">
+        <i class="bi bi-mortarboard-fill me-2"></i>
+        ADWEB Online
+      </router-link>
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item" v-if="isAuthenticated"> 
@@ -31,6 +36,22 @@
               <i class="bi bi-box-arrow-right me-1"></i>
               Cerrar Sesión
             </button>
+          </div>
+          <div v-else class="d-flex gap-2">
+            <router-link 
+              class="btn btn-outline-light btn-sm" 
+              to="/login"
+            >
+              <i class="bi bi-box-arrow-in-right me-1"></i>
+              Iniciar Sesión
+            </router-link>
+            <router-link 
+              class="btn btn-light btn-sm text-purple fw-bold" 
+              to="/registro"
+            >
+              <i class="bi bi-person-plus me-1"></i>
+              Registrarse
+            </router-link>
           </div>
           </div>
       </div>
