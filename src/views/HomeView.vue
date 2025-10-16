@@ -9,7 +9,7 @@
       </div>
 
       <AdminCoursesManager
-        v-if="role === 'Admin'"
+        v-if="isAdmin"
         :courses="courses"
         @courses-change="updateCourses"
       />
@@ -27,20 +27,18 @@
 import AdminCoursesManager from '@/components/AdminCoursesManager.vue'
 import UserCoursesList from '@/components/UserCoursesList.vue'
 import { useCoursesStore } from '@/stores/coursesStore';
+import { useAuthStore } from '@/stores/authStore';
 import { onMounted, onUnmounted, computed } from 'vue';
 
 export default {
   name: 'HomeView',
   components: { AdminCoursesManager, UserCoursesList },
   setup() {
-    // 1. Inicializar Pinia Store
+    // 1. Inicializar Pinia Stores
     const coursesStore = useCoursesStore();
+    const authStore = useAuthStore();
     let unsubscribe = null; 
     
-    // Simular datos de usuario (se mantiene la lógica local)
-    const role = localStorage.getItem('dev_role') || 'Usuario';
-    const currentEmail = localStorage.getItem('dev_email') || '';
-
     // 2. Iniciar y Detener Suscripción a Firebase
     onMounted(() => {
       // Iniciar la suscripción a cursos (onSnapshot) al montar el componente
@@ -55,12 +53,14 @@ export default {
       }
     });
 
-    // 3. Obtener Cursos y Estado desde el Store
+    // 3. Obtener datos desde los stores
     const courses = computed(() => coursesStore.getCourses);
+    const isAdmin = computed(() => authStore.isAdmin);
+    const currentEmail = computed(() => authStore.currentUserEmail);
 
     return {
-      // Datos de usuario
-      role,
+      // Datos de usuario desde authStore
+      isAdmin,
       currentEmail,
       // Datos de Pinia Store (reactivos)
       courses,

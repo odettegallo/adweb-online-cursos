@@ -15,7 +15,19 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     // Getter para dejar la información disponible
     currentUserEmail: (state) => state.user ? state.user.email : null,
-    isLoggedIn: (state) => state.isAuthenticated
+    isLoggedIn: (state) => state.isAuthenticated,
+    // Por defecto, todos los usuarios son usuarios normales (no administradores)
+    // Los roles de administrador deben configurarse desde Firebase
+    isAdmin: (state) => {
+      // Por ahora, ningún usuario es admin por defecto
+      // Esto debe configurarse desde Firebase en el futuro
+      return false;
+    },
+    // Getter para obtener el rol del usuario
+    userRole: (state) => {
+      // Todos los usuarios son 'user' por defecto
+      return 'user';
+    }
   },
   actions: {
     // Implementar mutations

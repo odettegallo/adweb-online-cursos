@@ -11,7 +11,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/home'
+      redirect: '/login'
     },
     {
       path: '/login',
@@ -36,7 +36,7 @@ const router = createRouter({
       name: 'Home',
       component: HomeView,
       meta: { 
-        requiresAuth: false,
+        requiresAuth: true,
         title: 'Inicio - ADWEB Online'
       }
     },

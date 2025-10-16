@@ -14,7 +14,7 @@
               Inicio
             </router-link>
           </li>
-          <li class="nav-item" v-if="isAuthenticated">
+          <li class="nav-item" v-if="isAuthenticated && isAdmin">
             <router-link class="nav-link" to="/admin">
               <i class="bi bi-gear-fill me-1"></i>
               Administración
@@ -26,7 +26,7 @@
           <div v-if="isAuthenticated" class="d-flex align-items-center">
             <span class="navbar-text me-3">
               <i class="bi bi-person-circle me-1"></i>
-              {{ userEmail }} 
+              {{ userName }} 
             </span>
             <button 
               class="btn btn-outline-light btn-sm" 
@@ -60,29 +60,25 @@
 </template>
 
 <script>
-// 1. Importar las herramientas de Pinia
 import { useAuthStore } from '@/stores/authStore';
 import { mapState, mapActions } from 'pinia';
 
 export default {
   name: 'NavBar',
-  // Elimina 'data()' y 'created()' si contenían lógica de autenticación temporal.
   
-  // 2. Mapear el estado del store a propiedades computadas del componente
   computed: {
     ...mapState(useAuthStore, {
-      // Mapea el getter 'isLoggedIn' del store al 'isAuthenticated' del template
       isAuthenticated: 'isLoggedIn',     
-      // Mapea el getter 'currentUserEmail' del store al 'userEmail' del template
       userEmail: 'currentUserEmail'      
-    })
+    }),
+    userName() {
+      return this.userEmail ? this.userEmail.split('@')[0] : '';
+    }
   },
   methods: {
-    // 3. Mapear la acción de logout del store a un método del componente
     ...mapActions(useAuthStore, ['logoutUser']),
 
     handleLogout() {
-      // 4. Llama a la acción mapeada, la cual ejecuta el signOut y la redirección
       this.logoutUser();
     }
   }
