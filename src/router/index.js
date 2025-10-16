@@ -4,6 +4,7 @@ import RegistroView from '../views/RegistroView.vue'
 import HomeView from '../views/HomeView.vue'
 import AdminView from '../views/AdminView.vue'
 import EditarCursoView from '../views/EditarCursoView.vue'
+import { useAuthStore } from '@/stores/authStore';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -73,7 +74,11 @@ router.beforeEach((to, from, next) => {
 
   // Verificar autenticación solo para rutas protegidas
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const isAuthenticated = localStorage.getItem('dev_isAuthenticated') === 'true'
+  
+  // 🔑 CAMBIO CLAVE: Usa Pinia Store
+  const authStore = useAuthStore() // Obtiene la instancia del store
+  // Asumo que tu getter se llama 'isLoggedIn' según NavBar.vue
+  const isAuthenticated = authStore.isLoggedIn 
 
   if (requiresAuth && !isAuthenticated) {
     next('/login')

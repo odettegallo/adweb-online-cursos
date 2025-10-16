@@ -1,3 +1,5 @@
+// AdminView.vue
+
 <template>
   <div class="admin-container">
     <div class="container py-5">
@@ -8,10 +10,21 @@
       
       <div class="row">
         <div class="col-12">
-          <div class="alert alert-warning" role="alert">
-            <i class="bi bi-gear me-2"></i>
-            Esta vista será implementada con la funcionalidad de administración cuando se integre Firebase.
+          
+          <div v-if="loading" class="alert alert-info text-center" role="alert">
+            <div class="spinner-border spinner-border-sm me-2" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            Cargando cursos desde Firebase en tiempo real...
           </div>
+
+          <div v-else-if="error" class="alert alert-danger" role="alert">
+            <i class="bi bi-x-circle me-2"></i>
+            Error al cargar cursos: {{ error }}
+          </div>
+          
+          <AdminCoursesManager v-else /> 
+
         </div>
       </div>
     </div>
@@ -19,9 +32,38 @@
 </template>
 
 <script>
+import AdminCoursesManager from '@/components/AdminCoursesManager.vue';
+import { useCoursesStore } from '@/stores/coursesStore';
+import { onMounted, onUnmounted } from 'vue';
+
+
 export default {
-  name: 'AdminView'
-}
+  name: 'AdminView',
+  components: { AdminCoursesManager },
+
+  setup() {
+    const coursesStore = useCoursesStore();
+    let unsubscribe = null; 
+
+    onMounted(() => {
+      // Iniciar la suscripción a cursos (onSnapshot) al montar el componente
+      unsubscribe = coursesStore.subscribeToCourses();
+    });
+
+    onUnmounted(() => {
+      // Desuscribirse cuando el componente se destruye
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    });
+
+    return {
+      // Se expone el estado para mostrar mensajes de carga y error
+      loading: coursesStore.loading, 
+      error: coursesStore.error, 
+    }
+  },
+};
 </script>
 
 <style scoped>

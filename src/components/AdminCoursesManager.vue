@@ -1,6 +1,14 @@
+// AdminCoursesManager.vue
+
 <template>
   <div class="card shadow-sm border-0">
     <div class="card-body">
+      
+      <div v-if="alertMessage" :class="['alert mb-3', alertType]" role="alert">
+        {{ alertMessage }}
+        <button type="button" class="btn-close" @click="clearAlert" aria-label="Close"></button>
+      </div>
+
       <div class="d-flex flex-wrap align-items-end gap-3 mb-3">
         <div class="flex-grow-1">
           <label class="form-label mb-1">Búsqueda</label>
@@ -13,47 +21,9 @@
             <option v-for="st in statuses" :key="st" :value="st">{{ st }}</option>
           </select>
         </div>
-      </div>
-
-      <div class="border rounded p-3 mb-3 bg-light">
-        <h6 class="fw-bold mb-3">Crear nuevo curso</h6>
-        <div class="row g-3">
-          <div class="col-md-2">
-            <input type="text" class="form-control" v-model="newCourse.code" placeholder="Código" />
-          </div>
-          <div class="col-md-3">
-            <input type="text" class="form-control" v-model="newCourse.name" placeholder="Nombre" />
-          </div>
-          <div class="col-md-2">
-            <select class="form-select" v-model="newCourse.status">
-              <option value="">Estado</option>
-              <option v-for="st in statuses" :key="st" :value="st">{{ st }}</option>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <input type="number" class="form-control" v-model.number="newCourse.price" placeholder="Precio" />
-          </div>
-          <div class="col-md-3">
-            <input type="text" class="form-control" v-model="newCourse.duration" placeholder="Duración (ej: 10h)" />
-          </div>
-          <div class="col-12">
-            <textarea class="form-control" v-model="newCourse.description" rows="2" placeholder="Descripción"></textarea>
-          </div>
-          <div class="col-md-2">
-            <input type="number" class="form-control" v-model.number="newCourse.cupos" placeholder="Cupos" />
-          </div>
-          <div class="col-md-2">
-            <input type="number" class="form-control" v-model.number="newCourse.inscritos" placeholder="Inscritos" />
-          </div>
-          <div class="col-md-5">
-            <input type="text" class="form-control" v-model="newCourse.imageUrl" placeholder="URL de la imagen (opcional)" />
-          </div>
-          <div class="col-md-3 d-flex justify-content-end">
-            <button class="btn btn-primary" @click="addCourse">
-              <i class="bi bi-plus-lg me-1"></i>Agregar
-            </button>
-          </div>
-        </div>
+        <button class="btn btn-primary" @click="openAddModal">
+          <i class="bi bi-plus-lg me-1"></i>Agregar Nuevo Curso
+        </button>
       </div>
 
       <div class="table-responsive">
@@ -88,10 +58,10 @@
                 </div>
               </td>
               <td class="text-end">
-                <button class="btn btn-outline-primary btn-sm me-2" @click="openEdit(course)">
+                <button class="btn btn-outline-primary btn-sm me-2" @click="editCourseRedirect(course)">
                   <i class="bi bi-pencil"></i>
                 </button>
-                <button class="btn btn-outline-danger btn-sm" @click="deleteCourse(course)">
+                <button class="btn btn-outline-danger btn-sm" @click="confirmDeleteCourse(course)">
                   <i class="bi bi-trash"></i>
                 </button>
               </td>
@@ -100,174 +70,214 @@
         </table>
       </div>
 
-      <div class="modal fade" tabindex="-1" ref="editModal">
+      <div class="modal fade" tabindex="-1" ref="addCourseModal">
         <div class="modal-dialog modal-lg modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title">Editar curso</h5>
-              <button type="button" class="btn-close" @click="closeEdit"></button>
+              <h5 class="modal-title">Agregar Nuevo Curso</h5>
+              <button type="button" class="btn-close" @click="closeAddModal"></button>
             </div>
             <div class="modal-body">
               <div class="row g-3">
-                <div class="col-md-3">
+                <div class="col-md-2">
                   <label class="form-label">Código</label>
-                  <input type="text" class="form-control" v-model="editCache.code" />
+                  <input type="text" class="form-control" v-model="newCourse.code" placeholder="Código" />
                 </div>
                 <div class="col-md-5">
                   <label class="form-label">Nombre</label>
-                  <input type="text" class="form-control" v-model="editCache.name" />
+                  <input type="text" class="form-control" v-model="newCourse.name" placeholder="Nombre" />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
+                  <label class="form-label">URL de Imagen</label>
+                  <input type="text" class="form-control" v-model="newCourse.imageUrl" placeholder="URL de la imagen" />
+                </div>
+                
+                <div class="col-md-3">
                   <label class="form-label">Estado</label>
-                  <select class="form-select" v-model="editCache.status">
-                    <option v-for="st in statuses" :key="st" :value="st">{{ st }}</option>
+                  <select class="form-select" v-model="newCourse.status">
+                    <option value="disponible">Disponible</option>
+                    <option value="en_revision">En Revisión</option>
+                    <option value="cerrado">Cerrado</option>
                   </select>
                 </div>
-                <div class="col-md-4">
-                  <label class="form-label">Precio</label>
-                  <input type="number" class="form-control" v-model.number="editCache.price" />
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Duración</label>
-                  <input type="text" class="form-control" v-model="editCache.duration" />
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label">Cupos</label>
-                  <input type="number" class="form-control" v-model.number="editCache.cupos" />
+                  <input type="number" class="form-control" v-model.number="newCourse.cupos" placeholder="Cupos" />
                 </div>
+                <div class="col-md-3">
+                  <label class="form-label">Inscritos</label>
+                  <input type="number" class="form-control" v-model.number="newCourse.inscritos" placeholder="Inscritos" />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Duración</label>
+                  <input type="text" class="form-control" v-model="newCourse.duration" placeholder="ej: 10h" />
+                </div>
+                
+                <div class="col-md-6">
+                  <label class="form-label">Costo ($)</label>
+                  <input type="number" class="form-control" v-model.number="newCourse.price" placeholder="Costo" />
+                </div>
+                
                 <div class="col-12">
                   <label class="form-label">Descripción</label>
-                  <textarea class="form-control" v-model="editCache.description" rows="3"></textarea>
+                  <textarea class="form-control" v-model="newCourse.description" rows="3" placeholder="Descripción"></textarea>
                 </div>
-                <div class="col-12">
-                  <label class="form-label">URL de Imagen</label>
-                  <input type="text" class="form-control" v-model="editCache.imageUrl" placeholder="URL de la imagen" />
-                </div>
-              </div>
-              <hr />
-              <div>
-                <label class="form-label">Miembros asignados</label>
-                <div class="d-flex gap-2 mb-2">
-                  <input type="email" class="form-control" v-model="memberToAdd" placeholder="correo@ejemplo.com" />
-                  <button class="btn btn-outline-primary" @click="addMember">
-                    <i class="bi bi-person-plus"></i>
-                  </button>
-                </div>
-                <div class="d-flex flex-wrap gap-2">
-                  <span v-for="m in editCache.assignedMembers" :key="m" class="badge bg-primary">
-                    {{ m }}
-                    <button type="button" class="btn btn-sm btn-light ms-2 py-0" @click="removeMember(m)">
-                      <i class="bi bi-x"></i>
-                    </button>
-                  </span>
-                </div>
+
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeEdit">Cancelar</button>
-              <button type="button" class="btn btn-primary" @click="saveEdit">Guardar cambios</button>
+              <button type="button" class="btn btn-secondary" @click="closeAddModal">Cancelar</button>
+              <button type="button" class="btn btn-primary" @click="addCourseWithConfirmation">
+                <i class="bi bi-plus-lg me-1"></i>Agregar Curso
+              </button>
             </div>
           </div>
         </div>
       </div>
+      
     </div>
   </div>
 </template>
 
 <script>
-import { Modal } from 'bootstrap'
+import { mapState, mapActions } from 'pinia';
+import { useCoursesStore } from '@/stores/coursesStore';
+import { Modal } from 'bootstrap'; 
 
 export default {
   name: 'AdminCoursesManager',
-  props: {
-    courses: { type: Array, required: true }
-  },
-  emits: ['courses-change'],
+  
   data() {
     return {
       searchTerm: '',
       filterStatus: '',
-      statuses: ['disponible', 'cerrado', 'en_revision'],
-      newCourse: { code: '', name: '', status: '', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, imageUrl: '' },
-      editCache: { id: '', code: '', name: '', status: 'disponible', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, assignedMembers: [], imageUrl: '' },
-      memberToAdd: '',
-      editModalInstance: null
+      statuses: ['disponible', 'en_revision', 'cerrado'],
+      newCourse: { 
+        code: '', name: '', status: 'disponible', price: 0, 
+        duration: '', description: '', cupos: 0, inscritos: 0, imageUrl: '' 
+      },
+      addModalInstance: null,
+      alertMessage: '',
+      alertType: '',
     }
   },
+  
   computed: {
+    ...mapState(useCoursesStore, {
+      allCourses: 'getCourses', //
+    }),
+
     filteredCourses() {
-      const term = this.searchTerm.trim().toLowerCase()
-      return this.courses.filter(c => {
-        const matchesTerm = !term ||
-          (c.code && c.code.toLowerCase().includes(term)) ||
-          (c.name && c.name.toLowerCase().includes(term)) ||
-          (c.description && c.description.toLowerCase().includes(term))
-        const matchesStatus = !this.filterStatus || c.status === this.filterStatus
-        return matchesTerm && matchesStatus
-      })
+      // Lógica de filtrado de cursos (basada en el contenido original)
+      return this.allCourses.filter(course => {
+        const matchesSearch = this.searchTerm 
+          ? [course.code, course.name, course.description].some(field => 
+              field && field.toLowerCase().includes(this.searchTerm.toLowerCase())
+            ) 
+          : true;
+        
+        const matchesStatus = this.filterStatus 
+          ? course.status === this.filterStatus 
+          : true;
+
+        return matchesSearch && matchesStatus;
+      });
     }
   },
-  mounted() {
-    // Inicializar el modal al montar el componente
-    this.editModalInstance = new Modal(this.$refs.editModal, {
-      backdrop: 'static', 
-      keyboard: false
-    });
-  },
+  
   methods: {
+    // Mapear acciones de Pinia (addCourse, deleteCourse, updateCourse)
+    ...mapActions(useCoursesStore, ['addCourse', 'deleteCourse']),
+
     currency(val) {
       return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(val || 0)
     },
-    addCourse() {
-      const { code, name, status, price, duration, description, cupos, inscritos, imageUrl } = this.newCourse
-      if (!code || !name || !status) return
-      const newItem = {
-        id: 'c_' + Math.random().toString(36).slice(2, 9),
-        code,
-        name,
-        status,
-        price: Number(price) || 0,
-        duration,
-        description,
-        cupos: Number(cupos) || 0,
-        inscritos: Number(inscritos) || 0,
-        assignedMembers: [],
-        imageUrl: imageUrl || 'https://picsum.photos/id/' + (Math.floor(Math.random() * 999) + 1) + '/800/600'
+
+    showAlert(message, type = 'alert-success') {
+      this.alertMessage = message;
+      this.alertType = type;
+      setTimeout(() => this.clearAlert(), 5000);
+    },
+    clearAlert() {
+      this.alertMessage = '';
+      this.alertType = '';
+    },
+
+    // Lógica de Modal de Agregar Curso
+    openAddModal() {
+      this.clearAlert();
+      this.newCourse = { code: '', name: '', status: 'disponible', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, imageUrl: '' };
+      this.addModalInstance.show();
+    },
+    closeAddModal() {
+      this.addModalInstance.hide();
+    },
+
+    // Lógica de Agregar Curso (con Confirmación)
+    async addCourseWithConfirmation() {
+      // Requerimiento: Modal de confirmación para Agregar Curso
+      const confirmAdd = window.confirm(`¿Desea agregar el curso "${this.newCourse.name}" (Costo: ${this.currency(this.newCourse.price)}) a la base de datos?`);
+
+      if (confirmAdd) { // Si el usuario presiona "Agregar Curso"
+        const courseData = {
+          // Se limpian y se validan datos (simplificado)
+          code: this.newCourse.code.trim(),
+          name: this.newCourse.name.trim(),
+          imageUrl: this.newCourse.imageUrl.trim() || 'https://picsum.photos/id/' + (Math.floor(Math.random() * 999) + 1) + '/800/600',
+          cupos: Number(this.newCourse.cupos) || 0,
+          inscritos: Number(this.newCourse.inscritos) || 0,
+          duration: this.newCourse.duration.trim(),
+          price: Number(this.newCourse.price) || 0,
+          description: this.newCourse.description.trim(),
+          status: this.newCourse.status || 'disponible',
+          assignedMembers: [],
+        };
+        
+        const result = await this.addCourse(courseData); // Agrega a Firebase
+        
+        if (result.success) {
+          this.closeAddModal(); // Cerrar el modal del formulario
+          // onSnapshot en el store actualiza todas las vistas instantáneamente
+          this.showAlert(`✅ Curso "${this.newCourse.name}" agregado correctamente.`, 'alert-success');
+        } else {
+          this.showAlert(`❌ Error al agregar curso: ${result.error}`, 'alert-danger');
+        }
       }
-      const updated = [newItem, ...this.courses]
-      this.$emit('courses-change', updated)
-      this.newCourse = { code: '', name: '', status: '', price: 0, duration: '', description: '', cupos: 0, inscritos: 0, imageUrl: '' }
+      // Si el usuario presiona "Cancelar", el modal deberá desaparecer (o seguir abierto si window.confirm).
     },
-    openEdit(course) {
-      this.editCache = JSON.parse(JSON.stringify(course))
-      this.editModalInstance.show()
+
+    // Lógica de Editar Curso (Redirección)
+    editCourseRedirect(course) {
+      // Requerimiento: Redirigir a la interfaz de edición
+      this.$router.push({ name: 'EditarCurso', params: { id: course.id } });
     },
-    closeEdit() {
-      this.editModalInstance.hide()
-      this.memberToAdd = ''
-    },
-    saveEdit() {
-      const updated = this.courses.map(c => c.id === this.editCache.id ? { ...c, ...this.editCache } : c)
-      this.$emit('courses-change', updated)
-      this.closeEdit()
-    },
-    deleteCourse(course) {
-      const updated = this.courses.filter(c => c.id !== course.id)
-      this.$emit('courses-change', updated)
-    },
-    addMember() {
-      const email = this.memberToAdd.trim().toLowerCase()
-      if (!email) return
-      if (!this.editCache.assignedMembers.includes(email)) {
-        this.editCache.assignedMembers.push(email)
+
+    // Lógica de Eliminar Curso (con Confirmación)
+    async confirmDeleteCourse(course) {
+      this.clearAlert();
+      
+      // Requerimiento: Ventana emergente/Modal de Confirmación
+      const confirmDelete = window.confirm(`⚠️ ¿Desea realmente eliminar el curso "${course.name}"?`);
+      
+      if (confirmDelete) { // Si el usuario presiona "Sí, borrar"
+        const result = await this.deleteCourse(course.id); // Eliminar en Firebase
+        
+        if (result.success) {
+          // onSnapshot en el store actualiza todas las vistas instantáneamente
+          this.showAlert(`✅ Curso "${course.name}" eliminado correctamente.`, 'alert-success');
+        } else {
+          this.showAlert(`❌ Error al eliminar curso: ${result.error}`, 'alert-danger');
+        }
       }
-      this.memberToAdd = ''
-    },
-    removeMember(email) {
-      this.editCache.assignedMembers = this.editCache.assignedMembers.filter(m => m !== email)
+      // Si el usuario hace clic sobre “Cancelar”, el modal deberá desaparecer (o seguir abierto si window.confirm).
     }
-  }
-}
+  },
+
+  mounted() {
+    // Inicializar el modal de Bootstrap
+    this.addModalInstance = new Modal(this.$refs.addCourseModal);
+  },
+};
 </script>
 
 <style scoped>
