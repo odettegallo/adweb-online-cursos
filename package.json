@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -25,7 +26,10 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^27.0.1",
     "vite": "^7.1.7",
-    "vite-plugin-vue-devtools": "^8.0.2"
+    "vite-plugin-vue-devtools": "^8.0.2",
+    "vitest": "^3.2.4"
   }
 }
