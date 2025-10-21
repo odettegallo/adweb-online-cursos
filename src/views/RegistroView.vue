@@ -1,12 +1,12 @@
 <template>
   <div class="register-container">
-    <div class="container-fluid h-100">
-      <div class="row h-100">
+    <v-container fluid class="h-100">
+      <v-row class="h-100">
         <!-- Left side - Branding -->
-        <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-light">
+        <v-col cols="12" lg="6" class="d-none d-lg-flex align-center justify-center bg-light">
           <div class="text-center">
             <div class="illustration-container mb-4">
-              <i class="bi bi-person-plus text-primary" style="font-size: 8rem; opacity: 0.8;"></i>
+              <v-icon color="primary" size="128" style="opacity: 0.8;">mdi-account-plus</v-icon>
             </div>
             <h3 class="fw-bold text-dark mb-3">Únete a ADWEB Online</h3>
             <p class="text-muted fs-5 mb-4">
@@ -14,194 +14,137 @@
             </p>
             <div class="features-list">
               <div class="feature-item mb-2">
-                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <v-icon color="success" class="me-2">mdi-check-circle</v-icon>
                 <span>Registro gratuito</span>
               </div>
               <div class="feature-item mb-2">
-                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <v-icon color="success" class="me-2">mdi-check-circle</v-icon>
                 <span>Acceso inmediato</span>
               </div>
               <div class="feature-item">
-                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <v-icon color="success" class="me-2">mdi-check-circle</v-icon>
                 <span>Soporte 24/7</span>
               </div>
             </div>
           </div>
-        </div>
+        </v-col>
 
         <!-- Right side - Register Form -->
-        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+        <v-col cols="12" lg="6" class="d-flex align-center justify-center">
           <div class="register-form-container">
             <div class="text-center mb-4">
               <div class="logo-container mb-3">
-                <i class="bi bi-mortarboard-fill text-primary" style="font-size: 3rem;"></i>
+                <v-icon color="primary" size="48">mdi-school</v-icon>
               </div>
               <h2 class="fw-bold text-dark mb-2">Crear Cuenta</h2>
               <p class="text-muted">Regístrate en ADWEB Online</p>
             </div>
 
             <!-- Register Form -->
-            <form @submit.prevent="handleRegister" class="register-form">
+            <v-form @submit.prevent="handleRegister" class="register-form">
               <!-- Name Field -->
-              <div class="mb-3">
-                <label for="name" class="form-label fw-semibold">
-                  <i class="bi bi-person me-2"></i>Nombre Completo
-                </label>
-                <input
-                  type="text"
-                  class="form-control form-control-lg"
-                  id="name"
-                  v-model="formData.name"
-                  :class="{ 'is-invalid': errors.name }"
-                  placeholder="Tu nombre completo"
-                  required
-                >
-                <div v-if="errors.name" class="invalid-feedback">
-                  {{ errors.name }}
-                </div>
-              </div>
+              <v-text-field
+                v-model="formData.name"
+                label="Nombre Completo"
+                :error="!!errors.name"
+                :error-messages="errors.name ? [errors.name] : []"
+                prepend-inner-icon="mdi-account"
+                density="comfortable"
+                required
+              />
 
               <!-- Email Field -->
-              <div class="mb-3">
-                <label for="email" class="form-label fw-semibold">
-                  <i class="bi bi-envelope me-2"></i>Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  class="form-control form-control-lg"
-                  id="email"
-                  v-model="formData.email"
-                  :class="{ 'is-invalid': errors.email }"
-                  placeholder="tu@email.com"
-                  required
-                >
-                <div v-if="errors.email" class="invalid-feedback">
-                  {{ errors.email }}
-                </div>
-              </div>
+              <v-text-field
+                v-model="formData.email"
+                label="Correo Electrónico"
+                type="email"
+                :error="!!errors.email"
+                :error-messages="errors.email ? [errors.email] : []"
+                prepend-inner-icon="mdi-email"
+                density="comfortable"
+                required
+              />
 
               <!-- Password Field -->
-              <div class="mb-3">
-                <label for="password" class="form-label fw-semibold">
-                  <i class="bi bi-lock me-2"></i>Contraseña
-                </label>
-                <div class="input-group">
-                  <input
-                    :type="showPassword ? 'text' : 'password'"
-                    class="form-control form-control-lg"
-                    id="password"
-                    v-model="formData.password"
-                    :class="{ 'is-invalid': errors.password }"
-                    placeholder="Mínimo 6 caracteres"
-                    required
-                  >
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    @click="togglePassword"
-                  >
-                    <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-                  </button>
-                  <div v-if="errors.password" class="invalid-feedback">
-                    {{ errors.password }}
-                  </div>
-                </div>
-              </div>
+              <v-text-field
+                v-model="formData.password"
+                :type="showPassword ? 'text' : 'password'"
+                label="Contraseña"
+                :error="!!errors.password"
+                :error-messages="errors.password ? [errors.password] : []"
+                prepend-inner-icon="mdi-lock"
+                append-inner-icon="mdi-eye"
+                @click:append-inner="togglePassword"
+                placeholder="Mínimo 6 caracteres"
+                density="comfortable"
+                required
+              />
 
               <!-- Confirm Password Field -->
-              <div class="mb-3">
-                <label for="confirmPassword" class="form-label fw-semibold">
-                  <i class="bi bi-lock-fill me-2"></i>Confirmar Contraseña
-                </label>
-                <div class="input-group">
-                  <input
-                    :type="showConfirmPassword ? 'text' : 'password'"
-                    class="form-control form-control-lg"
-                    id="confirmPassword"
-                    v-model="formData.confirmPassword"
-                    :class="{ 'is-invalid': errors.confirmPassword }"
-                    placeholder="Repite tu contraseña"
-                    required
-                  >
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    @click="toggleConfirmPassword"
-                  >
-                    <i :class="showConfirmPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-                  </button>
-                  <div v-if="errors.confirmPassword" class="invalid-feedback">
-                    {{ errors.confirmPassword }}
-                  </div>
-                </div>
-              </div>
+              <v-text-field
+                v-model="formData.confirmPassword"
+                :type="showConfirmPassword ? 'text' : 'password'"
+                label="Confirmar Contraseña"
+                :error="!!errors.confirmPassword"
+                :error-messages="errors.confirmPassword ? [errors.confirmPassword] : []"
+                prepend-inner-icon="mdi-lock-check"
+                append-inner-icon="mdi-eye"
+                @click:append-inner="toggleConfirmPassword"
+                density="comfortable"
+                required
+              />
 
               <!-- Terms and Conditions -->
-              <div class="mb-4">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="acceptTerms"
-                    v-model="formData.acceptTerms"
-                    :class="{ 'is-invalid': errors.acceptTerms }"
-                    required
-                  >
-                  <label class="form-check-label" for="acceptTerms">
-                    Acepto los 
-                    <a href="#" class="text-primary text-decoration-none">términos y condiciones</a>
-                    y la 
-                    <a href="#" class="text-primary text-decoration-none">política de privacidad</a>
-                  </label>
-                  <div v-if="errors.acceptTerms" class="invalid-feedback d-block">
-                    {{ errors.acceptTerms }}
-                  </div>
-                </div>
-              </div>
+              <v-checkbox
+                v-model="formData.acceptTerms"
+                :error="!!errors.acceptTerms"
+                :error-messages="errors.acceptTerms ? [errors.acceptTerms] : []"
+                label="Acepto los términos y condiciones y la política de privacidad"
+                class="mb-4"
+                required
+              />
 
               <!-- Submit Button -->
-              <button
+              <v-btn
                 type="submit"
-                class="btn btn-primary btn-lg w-100 mb-3"
-                :disabled="isLoading"
+                color="primary"
+                size="large"
+                class="w-100 mb-3"
+                :loading="isLoading"
+                prepend-icon="mdi-account-plus"
               >
-                <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                <i v-else class="bi bi-person-plus me-2"></i>
                 {{ isLoading ? 'Creando cuenta...' : 'Crear Cuenta' }}
-              </button>
+              </v-btn>
 
               <!-- Error Message -->
-              <div v-if="generalError" class="alert alert-danger" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
+              <v-alert v-if="generalError" type="error" variant="tonal" class="mb-3">
                 {{ generalError }}
-              </div>
+              </v-alert>
 
               <!-- Success Message -->
-              <div v-if="successMessage" class="alert alert-success" role="alert">
-                <i class="bi bi-check-circle me-2"></i>
+              <v-alert v-if="successMessage" type="success" variant="tonal" class="mb-3">
                 {{ successMessage }}
-              </div>
+              </v-alert>
 
               <!-- Login Link -->
               <div class="text-center">
                 <p class="mb-0">
                   ¿Ya tienes una cuenta?
-                  <router-link to="/login" class="text-primary text-decoration-none fw-semibold">
+                  <RouterLink to="/login" class="text-primary text-decoration-none fw-semibold">
                     Inicia sesión aquí
-                  </router-link>
+                  </RouterLink>
                 </p>
               </div>
-            </form>
+            </v-form>
           </div>
-        </div>
-      </div>
-    </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
 <script>
 import { useAuthStore } from '@/stores/authStore'
-
 
 export default {
   name: 'RegistroView',
@@ -294,21 +237,10 @@ export default {
       this.isLoading = true
       
       try {
-        // Aquí se implementará la lógica de Firebase createUserWithEmailAndPassword
         const authStore = useAuthStore()
         await authStore.registerUser(this.formData.email, this.formData.password, this.formData.name)
-
-      
         
-        // Simulación de delay para mostrar loading
         await new Promise(resolve => setTimeout(resolve, 1500))
-        
-        // Aquí se llamará a Firebase Auth
-        // const userCredential = await createUserWithEmailAndPassword(auth, this.formData.email, this.formData.password)
-        // Actualizar el perfil del usuario con el nombre
-        // await updateProfile(userCredential.user, { displayName: this.formData.name })
-        // Redirigir al usuario después del registro exitoso
-        // this.$router.push('/home')
         
         this.successMessage = 'Cuenta creada exitosamente.'
         this.$router.push('/home')

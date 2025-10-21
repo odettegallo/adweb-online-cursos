@@ -1,117 +1,87 @@
 <template>
   <div class="login-container">
-    <div class="container-fluid h-100">
-      <div class="row h-100">
-        <!-- Left side - Login Form -->
-        <div class="col-lg-6 d-flex align-items-center justify-content-center">
+    <v-container fluid class="h-100">
+      <v-row class="h-100">
+        <v-col cols="12" lg="6" class="d-flex align-center justify-center">
           <div class="login-form-container">
             <div class="text-center mb-4">
               <div class="logo-container mb-3">
-                <i class="bi bi-mortarboard-fill text-primary" style="font-size: 3rem;"></i>
+                <v-icon color="primary" size="48">mdi-school</v-icon>
               </div>
               <h2 class="fw-bold text-dark mb-2">Iniciar Sesión</h2>
               <p class="text-muted">Accede a tu cuenta de ADWEB Online</p>
             </div>
 
             <!-- Login Form -->
-            <form @submit.prevent="handleLogin" class="login-form">
+            <v-form @submit.prevent="handleLogin" class="login-form">
               <!-- Email Field -->
-              <div class="mb-3">
-                <label for="email" class="form-label fw-semibold">
-                  <i class="bi bi-envelope me-2"></i>Correo Electrónico
-                </label>
-                <input
-                  type="email"
-                  class="form-control form-control-lg"
-                  id="email"
-                  v-model="formData.email"
-                  :class="{ 'is-invalid': errors.email }"
-                  placeholder="tu@email.com"
-                  required
-                >
-                <div v-if="errors.email" class="invalid-feedback">
-                  {{ errors.email }}
-                </div>
-              </div>
+              <v-text-field
+                v-model="formData.email"
+                label="Correo Electrónico"
+                type="email"
+                :error="!!errors.email"
+                :error-messages="errors.email ? [errors.email] : []"
+                prepend-inner-icon="mdi-email"
+                density="comfortable"
+                required
+              />
 
               <!-- Password Field -->
-              <div class="mb-3">
-                <label for="password" class="form-label fw-semibold">
-                  <i class="bi bi-lock me-2"></i>Contraseña
-                </label>
-                <div class="input-group">
-                  <input
-                    :type="showPassword ? 'text' : 'password'"
-                    class="form-control form-control-lg"
-                    id="password"
-                    v-model="formData.password"
-                    :class="{ 'is-invalid': errors.password }"
-                    placeholder="Tu contraseña"
-                    required
-                  >
-                  <button
-                    class="btn btn-outline-secondary"
-                    type="button"
-                    @click="togglePassword"
-                  >
-                    <i :class="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
-                  </button>
-                  <div v-if="errors.password" class="invalid-feedback">
-                    {{ errors.password }}
-                  </div>
-                </div>
-              </div>
+              <v-text-field
+                v-model="formData.password"
+                :type="showPassword ? 'text' : 'password'"
+                label="Contraseña"
+                :error="!!errors.password"
+                :error-messages="errors.password ? [errors.password] : []"
+                prepend-inner-icon="mdi-lock"
+                append-inner-icon="mdi-eye"
+                @click:append-inner="togglePassword"
+                density="comfortable"
+                required
+              />
 
               <!-- Remember Me -->
-              <div class="mb-4">
-                <div class="form-check">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="rememberMe"
-                    v-model="formData.rememberMe"
-                  >
-                  <label class="form-check-label" for="rememberMe">
-                    Recordar mi sesión
-                  </label>
-                </div>
-              </div>
+              <v-checkbox
+                v-model="formData.rememberMe"
+                label="Recordar mi sesión"
+                class="mb-4"
+              />
 
               <!-- Submit Button -->
-              <button
+              <v-btn
                 type="submit"
-                class="btn btn-primary btn-lg w-100 mb-3"
-                :disabled="isLoading"
+                color="primary"
+                size="large"
+                class="w-100 mb-3"
+                :loading="isLoading"
+                prepend-icon="mdi-login"
               >
-                <span v-if="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                <i v-else class="bi bi-box-arrow-in-right me-2"></i>
                 {{ isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión' }}
-              </button>
+              </v-btn>
 
               <!-- Error Message -->
-              <div v-if="generalError" class="alert alert-danger" role="alert">
-                <i class="bi bi-exclamation-triangle me-2"></i>
+              <v-alert v-if="generalError" type="error" variant="tonal" class="mb-3">
                 {{ generalError }}
-              </div>
+              </v-alert>
 
               <!-- Register Link -->
               <div class="text-center">
                 <p class="mb-0">
                   ¿No tienes una cuenta?
-                  <router-link to="/registro" class="text-primary text-decoration-none fw-semibold">
+                  <RouterLink to="/registro" class="text-primary text-decoration-none fw-semibold">
                     Regístrate aquí
-                  </router-link>
+                  </RouterLink>
                 </p>
               </div>
-            </form>
+            </v-form>
           </div>
-        </div>
+        </v-col>
 
         <!-- Right side - Image/Branding -->
-        <div class="col-lg-6 d-none d-lg-flex align-items-center justify-content-center bg-light">
+        <v-col cols="12" lg="6" class="d-none d-lg-flex align-center justify-center bg-light">
           <div class="text-center">
             <div class="illustration-container mb-4">
-              <i class="bi bi-laptop text-primary" style="font-size: 8rem; opacity: 0.8;"></i>
+              <v-icon color="primary" size="128" style="opacity: 0.8;">mdi-laptop</v-icon>
             </div>
             <h3 class="fw-bold text-dark mb-3">Aprende con ADWEB Online</h3>
             <p class="text-muted fs-5 mb-4">
@@ -119,22 +89,22 @@
             </p>
             <div class="features-list">
               <div class="feature-item mb-2">
-                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <v-icon color="success" class="me-2">mdi-check-circle</v-icon>
                 <span>Cursos actualizados</span>
               </div>
               <div class="feature-item mb-2">
-                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <v-icon color="success" class="me-2">mdi-check-circle</v-icon>
                 <span>Instructores expertos</span>
               </div>
               <div class="feature-item">
-                <i class="bi bi-check-circle-fill text-success me-2"></i>
+                <v-icon color="success" class="me-2">mdi-check-circle</v-icon>
                 <span>Certificados oficiales</span>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -198,7 +168,13 @@ export default {
       try {
         const authStore = useAuthStore()
         await authStore.loginUser(this.formData.email, this.formData.password)
-        this.$router.push('/home')
+        
+        // Redirigir según el rol del usuario
+        if (authStore.isAdmin) {
+          this.$router.push('/admin')
+        } else {
+          this.$router.push('/home')
+        }
         
       } catch (error) {
         console.error('Login error:', error)

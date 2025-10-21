@@ -1,16 +1,15 @@
 <template>
-  <div id="app">
+  <v-app>
     <NavBar v-if="showNavBar" />
-    
-    <main :class="{ 'with-navbar': showNavBar }">
+    <v-main :class="{ 'with-navbar': showNavBar }">
       <RouterView />
-    </main>
-  </div>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
 import NavBar from './components/NavBar.vue'
-import { useAuthStore } from '@/stores/authStore' // Importar el store
+import { useAuthStore } from '@/stores/authStore'
 
 export default {
   name: 'App',
@@ -19,16 +18,12 @@ export default {
   },
   computed: {
     showNavBar() {
-      // Ocultar NavBar en las páginas de login y registro
       const hiddenRoutes = ['/login', '/registro']
       return !hiddenRoutes.includes(this.$route.path)
     }
   },
-  // CLAVE: Suscribirse al estado de autenticación de Firebase
   created() {
     const authStore = useAuthStore();
-    // Inicia el listener. Esto actualiza el estado del store y maneja
-    // la redirección inicial si el usuario ya está logueado.
     authStore.subscribeToAuthState();
   }
 }

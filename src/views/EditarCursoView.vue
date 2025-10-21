@@ -2,90 +2,76 @@
 
 <template>
   <div class="editar-curso-container">
-    <div class="container py-5">
+    <v-container class="py-5">
       <div class="text-center mb-5">
         <h1 class="display-4 fw-bold text-gradient">Editar Curso: {{ courseCache.name || 'Cargando...' }}</h1>
         <p class="lead text-muted">Modifica la información del curso</p>
       </div>
       
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
+      <v-row justify="center">
+        <v-col cols="12" lg="8">
 
-          <div v-if="alertMessage" :class="['alert mb-3', alertType]" role="alert">
+          <v-alert v-if="alertMessage" :type="alertType.includes('success') ? 'success' : (alertType.includes('danger') ? 'error' : 'info')" variant="tonal" class="mb-3" closable @click:close="clearAlert">
             {{ alertMessage }}
-            <button type="button" class="btn-close" @click="clearAlert" aria-label="Close"></button>
-          </div>
+          </v-alert>
           
-          <div v-if="loading || !courseCache.id" class="alert alert-info text-center" role="alert">
+          <v-alert v-if="loading || !courseCache.id" type="info" variant="tonal" class="text-center">
             Cargando datos del curso...
-          </div>
-          <div v-else-if="error || !course" class="alert alert-danger" role="alert">
+          </v-alert>
+          <v-alert v-else-if="error || !course" type="error" variant="tonal">
             Curso no encontrado o error de carga: {{ error || 'ID de curso inválido.' }}
-          </div>
+          </v-alert>
           
-          <div v-else class="card shadow-sm border-0 p-4">
-            <form @submit.prevent="updateCourseWithConfirmation">
-              <div class="row g-3">
+          <v-card v-else class="p-4" elevation="2">
+            <v-form @submit.prevent="updateCourseWithConfirmation">
+              <v-row class="g-3">
                 
-                <div class="col-md-3">
-                  <label class="form-label">Código</label>
-                  <input type="text" class="form-control" v-model="courseCache.code" required />
-                </div>
-                <div class="col-md-5">
-                  <label class="form-label">Nombre</label>
-                  <input type="text" class="form-control" v-model="courseCache.name" required />
-                </div>
-                <div class="col-md-4">
-                  <label class="form-label">Estado</label>
-                  <select class="form-select" v-model="courseCache.status" required>
-                    <option value="disponible">Disponible</option>
-                    <option value="en_revision">En Revisión</option>
-                    <option value="cerrado">Cerrado</option>
-                  </select>
-                </div>
+                <v-col cols="12" md="3">
+                  <v-text-field label="Código" v-model="courseCache.code" required />
+                </v-col>
+                <v-col cols="12" md="5">
+                  <v-text-field label="Nombre" v-model="courseCache.name" required />
+                </v-col>
+                <v-col cols="12" md="4">
+                  <v-select label="Estado" v-model="courseCache.status" :items="['disponible','en_revision','cerrado']" required />
+                </v-col>
                 
-                <div class="col-md-3">
-                  <label class="form-label">Cupos</label>
-                  <input type="number" class="form-control" v-model.number="courseCache.cupos" required min="0" />
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Inscritos</label>
-                  <input type="number" class="form-control" v-model.number="courseCache.inscritos" required min="0" />
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Duración</label>
-                  <input type="text" class="form-control" v-model="courseCache.duration" required />
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Costo ($)</label>
-                  <input type="number" class="form-control" v-model.number="courseCache.price" required min="0" />
-                </div>
+                <v-col cols="12" md="3">
+                  <v-text-field label="Cupos" type="number" v-model.number="courseCache.cupos" required min="0" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <v-text-field label="Inscritos" type="number" v-model.number="courseCache.inscritos" required min="0" />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <v-text-field label="Duración" v-model="courseCache.duration" required />
+                </v-col>
+                <v-col cols="12" md="3">
+                  <v-text-field label="Costo ($)" type="number" v-model.number="courseCache.price" required min="0" />
+                </v-col>
                 
-                <div class="col-12">
-                  <label class="form-label">URL de Imagen</label>
-                  <input type="text" class="form-control" v-model="courseCache.imageUrl" />
-                </div>
+                <v-col cols="12">
+                  <v-text-field label="URL de Imagen" v-model="courseCache.imageUrl" />
+                </v-col>
                 
-                <div class="col-12">
-                  <label class="form-label">Descripción</label>
-                  <textarea class="form-control" v-model="courseCache.description" rows="3" required></textarea>
-                </div>
+                <v-col cols="12">
+                  <v-textarea label="Descripción" v-model="courseCache.description" rows="3" required />
+                </v-col>
                 
-                <div class="col-12 text-end mt-4">
-                  <button type="button" class="btn btn-secondary me-2" @click="$router.push({ name: 'Admin' })">
-                    <i class="bi bi-arrow-left me-1"></i> Volver a Administración
-                  </button>
-                  <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save me-1"></i> Guardar Cambios
-                  </button>
-                </div>
+                <v-col cols="12" class="text-end mt-4">
+                  <v-btn color="secondary" class="me-2" @click="$router.push({ name: 'Admin' })" prepend-icon="mdi-arrow-left">
+                    Volver a Administración
+                  </v-btn>
+                  <v-btn color="primary" type="submit" prepend-icon="mdi-content-save">
+                    Guardar Cambios
+                  </v-btn>
+                </v-col>
 
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
+              </v-row>
+            </v-form>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 
@@ -130,12 +116,10 @@ export default {
       alertType.value = '';
     };
 
-    // Lógica de Actualización (con Confirmación/Alerta y Redirección)
     const updateCourseWithConfirmation = async () => {
       clearAlert();
       
       const updatedData = {
-        // Datos a enviar a Firebase (se excluye el ID y se limpian los datos)
         code: courseCache.value.code.trim(),
         name: courseCache.value.name.trim(),
         imageUrl: courseCache.value.imageUrl.trim(),
@@ -147,16 +131,14 @@ export default {
         status: courseCache.value.status,
       };
 
-      const result = await store.updateCourse(courseId, updatedData); // Actualiza en Firebase
+      const result = await store.updateCourse(courseId, updatedData);
 
       if (result.success) {
-        // Requerimiento: Desplegar modal/popup/alert de éxito
         showAlert(`✅ Curso "${courseCache.value.name}" actualizado correctamente. Redirigiendo...`, 'alert-success');
         
-        // Requerimiento: Retornar al usuario a la vista de administración automáticamente
         setTimeout(() => {
           router.push({ name: 'Admin' }); 
-        }, 1500); 
+        }, 1500);
 
       } else {
         showAlert(`❌ Error al actualizar curso: ${result.error}`, 'alert-danger');
