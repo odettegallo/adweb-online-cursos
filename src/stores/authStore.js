@@ -8,29 +8,20 @@ import {createUserWithEmailAndPassword,
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null, // Almacena la información del usuario
+    user: null,
     isAuthenticated: false,
     authModalMessage: ''
   }),
   getters: {
-    // Getter para dejar la información disponible
     currentUserEmail: (state) => state.user ? state.user.email : null,
     isLoggedIn: (state) => state.isAuthenticated,
-    // Por defecto, todos los usuarios son usuarios normales (no administradores)
-    // Los roles de administrador deben configurarse desde Firebase
     isAdmin: (state) => {
-      // Por ahora, ningún usuario es admin por defecto
-      // Esto debe configurarse desde Firebase en el futuro
-      return false;
-    },
-    // Getter para obtener el rol del usuario
-    userRole: (state) => {
-      // Todos los usuarios son 'user' por defecto
-      return 'user';
+      if (!state.user || !state.user.email) return false;
+      const adminEmails = ['admin@adweb.com', 'administrador@adweb.com', 'usuario1@mitienda.com'];
+      return adminEmails.includes(state.user.email);
     }
   },
   actions: {
-    // Implementar mutations
     setUser(user) {
       this.user = user;
       this.isAuthenticated = !!user;
@@ -39,11 +30,9 @@ export const useAuthStore = defineStore('auth', {
       this.authModalMessage = message;
     },
 
-    // Crear nuevos usuarios (create User With Email And Password)
     async registerUser(email, password) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        // La mutación (setUser) se ejecutará a través de onAuthStateChanged
         return userCredential;
       } catch (error) {
         console.error('Registration error:', error.message);
@@ -51,11 +40,9 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // Ingresar usuarios existentes (sign In With Email And Password)
     async loginUser(email, password) {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        // La mutación (setUser) se ejecutará a través de onAuthStateChanged
         return userCredential;
       } catch (error) {
         console.error('Login error:', error.message);
@@ -63,31 +50,24 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // Cerrar sesión (sign Out)
     async logoutUser() {
       try {
         await signOut(auth);
-        // La mutación (setUser) se ejecutará a través de onAuthStateChanged
-        router.push({ name: 'Login' }); // Redirigir inmediatamente a Login
+        router.push({ name: 'Login' });
       } catch (error) {
         console.error('Logout error:', error.message);
       }
     },
 
-    // Aplicar el método on Auth State Changed
-    // Se llama al inicializar la app (e.g., en App.vue o main.js)
     subscribeToAuthState() {
       onAuthStateChanged(auth, (user) => {
         this.setUser(user);
         if (user) {
-          // Si el usuario ingresó correctamente (incluyendo registro y login)
           this.setAuthModalMessage(`¡Bienvenido! Has ingresado como: ${user.email}`);
-          // Mostrar modal/alert y redirigir
           if (router.currentRoute.value.name === 'Login' || router.currentRoute.value.name === 'Register') {
             router.push({ name: 'Home' });
           }
         } else {
-          // Usuario salió
           this.setAuthModalMessage('');
         }
       });

@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
-    <div class="container py-4">
-      <div class="d-flex align-items-center justify-content-between mb-4">
+    <v-container class="py-4">
+      <div class="d-flex align-center justify-space-between mb-4">
         <div>
           <h1 class="h3 fw-bold text-gradient mb-1">Inicio</h1>
           <p class="text-dark mb-0">Gestiona y explora los cursos de ADWEB Online</p>
@@ -19,7 +19,7 @@
         :courses="courses"
         :current-email="currentEmail"
       />
-    </div>
+    </v-container>
   </div>
 </template>
 

@@ -65,19 +65,13 @@ const router = createRouter({
   ],
 })
 
-// Navigation guard para proteger rutas
 router.beforeEach((to, from, next) => {
-  // Actualizar título de la página
   if (to.meta.title) {
     document.title = to.meta.title
   }
 
-  // Verificar autenticación solo para rutas protegidas
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  
-  // 🔑 CAMBIO CLAVE: Usa Pinia Store
-  const authStore = useAuthStore() // Obtiene la instancia del store
-  // Asumo que tu getter se llama 'isLoggedIn' según NavBar.vue
+  const authStore = useAuthStore()
   const isAuthenticated = authStore.isLoggedIn 
 
   if (requiresAuth && !isAuthenticated) {

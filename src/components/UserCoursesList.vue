@@ -1,62 +1,63 @@
 <template>
   <div class="courses-grid">
-    <div 
-      v-for="course in courses" 
-      :key="course.id" 
-      class="card clean-course-card h-100" 
-      :class="{ 'card-disabled': !isAccessible(course) }"
-    >
-      
-      <div class="card-header bg-gradient-purple border-bottom-0 d-flex justify-content-between align-items-center">
-        <h5 class="mb-0 fw-bold text-white">{{ course.name }}</h5>
-        <span class="text-white-50 small">{{ course.code }}</span>
-      </div>
+    <v-row>
+      <v-col 
+        v-for="course in courses" 
+        :key="course.id" 
+        cols="12" md="6" lg="4"
+      >
+        <v-card 
+          class="clean-course-card h-100" 
+          :class="{ 'card-disabled': !isAccessible(course) }"
+          elevation="2"
+        >
+          <v-card-title class="bg-gradient-purple d-flex justify-space-between align-center text-white">
+            <h5 class="mb-0 fw-bold">{{ course.name }}</h5>
+            <span class="text-white-50 small">{{ course.code }}</span>
+          </v-card-title>
 
-      <div class="card-body d-flex flex-column p-0">
-        
-        <div class="course-image-container">
-            <img :src="course.imageUrl" class="card-img-top course-image" :alt="'Imagen del curso ' + course.name">
-        </div>
-        
-        <div class="p-3 d-flex flex-column flex-grow-1">
-            <div class="mb-3">
-              <span 
-                class="badge status-badge"
-                :class="getStatusClass(course.status)"
-              >
-                <i class="bi bi-tag-fill me-1"></i> {{ getStatusText(course.status) }}
-              </span>
+          <v-card-text class="d-flex flex-column p-0">
+            <div class="course-image-container">
+              <img :src="course.imageUrl" class="card-img-top course-image" :alt="'Imagen del curso ' + course.name">
             </div>
-
-            <p class="card-text text-muted flex-grow-1">{{ course.description }}</p>
             
-            <div class="features-bar mt-auto mb-3 p-2 rounded d-flex justify-content-between align-items-center">
-                <div class="text-center">
-                    <p class="mb-0 fw-bold text-purple">{{ course.duration }}</p>
-                    <small class="text-muted">Duración</small>
-                </div>
-                <div class="text-center">
-                    <p class="mb-0 fw-bold text-success">{{ course.price === 0 ? 'Gratis' : currency(course.price) }}</p>
-                    <small class="text-muted">Precio</small>
-                </div>
-                <div class="text-center">
-                    <p class="mb-0 fw-bold text-info">{{ course.cupos - course.inscritos }}</p>
-                    <small class="text-muted">Cupos</small>
-                </div>
-            </div>
+            <div class="p-3 d-flex flex-column flex-grow-1">
+              <div class="mb-3">
+                <v-chip :class="['status-badge']" :color="course.status === 'disponible' ? 'success' : (course.status === 'en_revision' ? 'warning' : 'error')" label>
+                  <v-icon class="me-1" size="18">mdi-tag</v-icon> {{ getStatusText(course.status) }}
+                </v-chip>
+              </div>
 
-            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
-              <small v-if="!isAccessible(course)" class="text-danger fw-semibold">No accesible</small>
-              <small v-else class="text-success fw-semibold">¡Inscrito!</small>
+              <p class="card-text text-muted flex-grow-1">{{ course.description }}</p>
+              
+              <div class="features-bar mt-auto mb-3 p-2 rounded d-flex justify-content-between align-center">
+                <div class="text-center">
+                  <p class="mb-0 fw-bold text-purple">{{ course.duration }}</p>
+                  <small class="text-muted">Duración</small>
+                </div>
+                <div class="text-center">
+                  <p class="mb-0 fw-bold text-success">{{ course.price === 0 ? 'Gratis' : currency(course.price) }}</p>
+                  <small class="text-muted">Precio</small>
+                </div>
+                <div class="text-center">
+                  <p class="mb-0 fw-bold text-info">{{ course.cupos - course.inscritos }}</p>
+                  <small class="text-muted">Cupos</small>
+                </div>
+              </div>
 
-              <button class="btn btn-sm btn-purple fw-bold text-white" :disabled="!isAccessible(course)">
-                <i class="bi bi-play-circle me-1"></i>
-                Ir al curso
-              </button>
+              <div class="d-flex justify-content-between align-center pt-2 border-top">
+                <small v-if="!isAccessible(course)" class="text-danger fw-semibold">No accesible</small>
+                <small v-else class="text-success fw-semibold">¡Inscrito!</small>
+
+                <v-btn class="fw-bold" color="primary" variant="tonal" size="small" :disabled="!isAccessible(course)" prepend-icon="mdi-play-circle">
+                  Ir al curso
+                </v-btn>
+              </div>
             </div>
-        </div>
-      </div>
-    </div>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </div>
 </template>
 

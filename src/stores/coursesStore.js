@@ -2,10 +2,10 @@ import {defineStore} from "pinia";
 import {db} from "@/firebase/config";
 import {
   collection,
-  onSnapshot, // Implementar el método on Snapshot
-  addDoc,     // Utilizar el método add
-  updateDoc,  // Emplear el método update
-  deleteDoc,  // Aplicar el método delete
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc,
   doc
 } from "firebase/firestore";
 
@@ -16,11 +16,9 @@ export const useCoursesStore = defineStore('courses', {
     error: null
   }),
   getters: {
-    // Getter para dejar la información disponible
     getCourses: (state) => state.courses
   },
   actions: {
-    // Implementar mutations
     setCourses(courses) {
       this.courses = courses;
     },
@@ -31,14 +29,12 @@ export const useCoursesStore = defineStore('courses', {
       this.error = err;
     },
 
-    // Acción para leer la base de datos en tiempo real (on Snapshot)
     subscribeToCourses() {
       this.setLoading(true);
       const coursesCol = collection(db, 'courses');
-      // Devuelve una función para desuscribirse
       return onSnapshot(coursesCol, (snapshot) => {
         const coursesList = snapshot.docs.map(doc => ({
-          id: doc.id, // El ID de Firestore es crucial para update/delete
+          id: doc.id,
           ...doc.data()
         }));
         this.setCourses(coursesList);
@@ -50,11 +46,9 @@ export const useCoursesStore = defineStore('courses', {
       });
     },
 
-    // Acción para agregar curso (add)
     async addCourse(newCourseData) {
       try {
         await addDoc(collection(db, 'courses'), newCourseData);
-        // onSnapshot se encargará de actualizar todas las interfaces
         return { success: true };
       } catch (error) {
         console.error('Error adding course:', error);
@@ -63,12 +57,10 @@ export const useCoursesStore = defineStore('courses', {
       }
     },
 
-    // Acción para eliminar curso (delete)
     async deleteCourse(courseId) {
       try {
         const courseRef = doc(db, 'courses', courseId);
         await deleteDoc(courseRef);
-        // onSnapshot se encargará de actualizar todas las interfaces
         return { success: true };
       } catch (error) {
         console.error('Error deleting course:', error);
@@ -77,12 +69,10 @@ export const useCoursesStore = defineStore('courses', {
       }
     },
 
-    // Acción para editar curso (update)
     async updateCourse(courseId, updatedData) {
       try {
         const courseRef = doc(db, 'courses', courseId);
-        await updateDoc(courseRef, updatedData); // O setDoc({ merge: true }) si fuera necesario
-        // onSnapshot se encargará de actualizar todas las interfaces
+        await updateDoc(courseRef, updatedData);
         return { success: true };
       } catch (error) {
         console.error('Error updating course:', error);
