@@ -1,58 +1,50 @@
 <template>
   <div class="courses-grid">
     <v-row>
-      <v-col 
-        v-for="course in courses" 
-        :key="course.id" 
+      <v-col
+        v-for="course in courses"
+        :key="course.id"
         cols="12" md="6" lg="4"
       >
-        <v-card 
-          class="clean-course-card h-100" 
+        <v-card
+          class="clean-course-card h-100"
           :class="{ 'card-disabled': !isAccessible(course) }"
-          elevation="2"
-        >
-          <v-card-title class="bg-gradient-purple d-flex justify-space-between align-center text-white">
-            <h5 class="mb-0 fw-bold">{{ course.name }}</h5>
+          elevation="4" >
+          <v-card-title class="bg-gradient-purple d-flex justify-space-between align-center text-white py-3"> <h5 class="mb-0 fw-bold">{{ course.name }}</h5>
             <span class="text-white-50 small">{{ course.code }}</span>
           </v-card-title>
 
-          <v-card-text class="d-flex flex-column p-0">
-            <div class="course-image-container">
+          <v-card-text class="pa-0 d-flex flex-column flex-grow-1"> <div class="course-image-container">
               <img :src="course.imageUrl" class="card-img-top course-image" :alt="'Imagen del curso ' + course.name">
             </div>
             
-            <div class="p-3 d-flex flex-column flex-grow-1">
-              <div class="mb-3">
-                <v-chip :class="['status-badge']" :color="course.status === 'disponible' ? 'success' : (course.status === 'en_revision' ? 'warning' : 'error')" label>
-                  <v-icon class="me-1" size="18">mdi-tag</v-icon> {{ getStatusText(course.status) }}
+            <div class="px-4 py-3 d-flex flex-column flex-grow-1"> <div class="mb-3">
+                <v-chip :color="course.status === 'disponible' ? 'success' : (course.status === 'en_revision' ? 'warning' : 'error')" label size="small"> <v-icon start size="18">mdi-tag</v-icon> {{ getStatusText(course.status) }}
                 </v-chip>
               </div>
 
-              <p class="card-text text-muted flex-grow-1">{{ course.description }}</p>
-              
-              <div class="features-bar mt-auto mb-3 p-2 rounded d-flex justify-content-between align-center">
-                <div class="text-center">
+              <p class="text-muted flex-grow-1 mb-4">{{ course.description }}</p> <div class="features-bar mt-auto mb-4 pa-2 rounded d-flex justify-space-around align-center"> <div class="text-center">
                   <p class="mb-0 fw-bold text-purple">{{ course.duration }}</p>
                   <small class="text-muted">Duración</small>
                 </div>
-                <div class="text-center">
+                <v-divider vertical inset class="mx-2"></v-divider> <div class="text-center">
                   <p class="mb-0 fw-bold text-success">{{ course.price === 0 ? 'Gratis' : currency(course.price) }}</p>
                   <small class="text-muted">Precio</small>
                 </div>
-                <div class="text-center">
+                <v-divider vertical inset class="mx-2"></v-divider> <div class="text-center">
                   <p class="mb-0 fw-bold text-info">{{ course.cupos - course.inscritos }}</p>
                   <small class="text-muted">Cupos</small>
                 </div>
               </div>
 
-              <div class="d-flex justify-content-between align-center pt-2 border-top">
+              <v-card-actions class="px-0 pt-3 d-flex justify-space-between align-center border-top">
                 <small v-if="!isAccessible(course)" class="text-danger fw-semibold">No accesible</small>
                 <small v-else class="text-success fw-semibold">¡Inscrito!</small>
 
                 <v-btn class="fw-bold" color="primary" variant="tonal" size="small" :disabled="!isAccessible(course)" prepend-icon="mdi-play-circle">
                   Ir al curso
                 </v-btn>
-              </div>
+              </v-card-actions>
             </div>
           </v-card-text>
         </v-card>
