@@ -1,49 +1,96 @@
 <template>
-  <v-app-bar class="bg-purple" elevation="2">
-    <v-container>
-      <div class="d-flex align-center w-100">
-        <RouterLink class="navbar-brand fw-bold text-white text-decoration-none d-flex align-center" to="/">
-          <v-icon class="me-2" color="white">mdi-school</v-icon>
-          ADWEB Online
-        </RouterLink>
+  <div>
+    <v-app-bar class="bg-purple" elevation="2">
+      <v-container>
+        <div class="d-flex align-center w-100">
 
-        <div class="d-flex align-center ms-6">
-          <template v-if="isAuthenticated">
-            <RouterLink class="nav-link text-white" to="/home">
-              <v-icon class="me-1" color="white">mdi-home</v-icon>
-              Inicio
-            </RouterLink>
-            <RouterLink v-if="isAuthenticated && isAdmin" class="nav-link text-white ms-4" to="/admin">
-              <v-icon class="me-1" color="white">mdi-cog</v-icon>
-              Administración
-            </RouterLink>
-          </template>
+          <v-app-bar-nav-icon class="d-lg-none text-white" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+
+          <RouterLink class="navbar-brand fw-bold text-white text-decoration-none d-flex align-center" to="/">
+            <v-icon class="me-2" color="white">mdi-school</v-icon>
+            ADWEB Online
+          </RouterLink>
+
+          <div class="d-none d-lg-flex align-center ms-6" v-if="isAuthenticated">
+              <RouterLink class="nav-link text-white text-decoration-none" to="/home">
+                <v-icon class="me-1" color="white">mdi-home</v-icon>
+                Inicio
+              </RouterLink>
+              <RouterLink v-if="isAdmin" class="nav-link text-white text-decoration-none ms-4" to="/admin">
+                <v-icon class="me-1" color="white">mdi-cog</v-icon>
+                Administración
+              </RouterLink>
+          </div>
+
+          <v-spacer />
+
+          <div class="d-flex align-center">
+            <template v-if="isAuthenticated">
+              <span class="navbar-text me-3 d-none d-md-flex align-center">
+                <v-icon class="me-1" color="white">mdi-email</v-icon>
+                {{ userEmail }}
+              </span>
+              <v-btn variant="outlined" color="white" size="small" @click="handleLogout" prepend-icon="mdi-logout">
+                Cerrar Sesión
+              </v-btn>
+            </template>
+            <template v-else>
+              <v-btn variant="outlined" color="white" size="small" class="me-2 d-none d-sm-flex" to="/login" prepend-icon="mdi-login">
+                Iniciar Sesión
+              </v-btn>
+              <v-btn color="white" size="small" class="text-purple fw-bold d-none d-sm-flex" to="/registro" prepend-icon="mdi-account-plus">
+                Registrarse
+              </v-btn>
+            </template>
+          </div>
         </div>
+      </v-container>
+    </v-app-bar>
 
-        <v-spacer />
+    <v-navigation-drawer v-model="drawer" temporary>
+      <v-list dense nav>
+        
+        <v-list-item v-if="isAuthenticated">
+          <template v-slot:prepend>
+            <v-icon>mdi-account-circle</v-icon>
+          </template>
+          <v-list-item-title class="font-weight-bold">
+             {{ userEmail }}
+          </v-list-item-title>
+        </v-list-item>
+        <v-divider v-if="isAuthenticated"></v-divider>
 
-        <div class="d-flex align-center">
-          <template v-if="isAuthenticated">
-            <span class="navbar-text me-3 d-flex align-center">
-              <v-icon class="me-1" color="white">mdi-account-circle</v-icon>
-              {{ userName }}
-            </span>
-            <v-btn variant="outlined" color="white" size="small" @click="handleLogout" prepend-icon="mdi-logout">
-              Cerrar Sesión
-            </v-btn>
+        <v-list-item v-if="isAuthenticated" link to="/home" @click="drawer = false">
+          <template v-slot:prepend>
+            <v-icon>mdi-home</v-icon>
           </template>
-          <template v-else>
-            <v-btn variant="outlined" color="white" size="small" class="me-2" to="/login" prepend-icon="mdi-login">
-              Iniciar Sesión
-            </v-btn>
-            <v-btn color="white" size="small" class="text-purple fw-bold" to="/registro" prepend-icon="mdi-account-plus">
-              Registrarse
-            </v-btn>
+          <v-list-item-title>Inicio</v-list-item-title>
+        </v-list-item>
+        
+        <v-list-item v-if="isAuthenticated && isAdmin" link to="/admin" @click="drawer = false">
+          <template v-slot:prepend>
+            <v-icon>mdi-cog</v-icon>
           </template>
-        </div>
-      </div>
-    </v-container>
-  </v-app-bar>
+          <v-list-item-title>Administración</v-list-item-title>
+        </v-list-item>
+        
+        <v-divider v-if="!isAuthenticated"></v-divider>
+
+        <v-list-item v-if="!isAuthenticated" link to="/login" @click="drawer = false">
+          <template v-slot:prepend>
+            <v-icon>mdi-login</v-icon>
+          </template>
+          <v-list-item-title>Iniciar Sesión</v-list-item-title>
+        </v-list-item>
+        <v-list-item v-if="!isAuthenticated" link to="/registro" @click="drawer = false">
+          <template v-slot:prepend>
+            <v-icon>mdi-account-plus</v-icon>
+          </template>
+          <v-list-item-title>Registrarse</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+  </div>
 </template>
 
 <script>
@@ -52,10 +99,14 @@ import { mapState, mapActions } from 'pinia';
 
 export default {
   name: 'NavBar',
+  data: () => ({
+    // Estado para controlar la visibilidad del menú desplegable (drawer)
+    drawer: false,
+  }),
   computed: {
     ...mapState(useAuthStore, {
       isAuthenticated: 'isLoggedIn',
-      userEmail: 'currentUserEmail',
+      userEmail: 'currentUserEmail', 
       isAdmin: 'isAdmin'
     }),
     userName() {
@@ -65,6 +116,8 @@ export default {
   methods: {
     ...mapActions(useAuthStore, ['logoutUser']),
     handleLogout() {
+      // Cierra el drawer antes de cerrar sesión
+      this.drawer = false;
       this.logoutUser();
     }
   }
