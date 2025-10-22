@@ -27,6 +27,7 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/test-utils": "^2.4.6",
+    "firebase-tools": "^14.20.0",
     "jsdom": "^27.0.1",
     "vite": "^7.1.7",
     "vite-plugin-vue-devtools": "^8.0.2",
