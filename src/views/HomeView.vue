@@ -11,7 +11,7 @@
       <AdminCoursesManager
         v-if="isAdmin"
         :courses="courses"
-        @courses-change="updateCourses"
+        @courses-change="courses"
       />
 
       <UserCoursesList
