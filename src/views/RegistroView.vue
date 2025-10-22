@@ -2,7 +2,6 @@
   <div class="register-container">
     <v-container fluid class="h-100">
       <v-row class="h-100">
-        <!-- Left side - Branding -->
         <v-col cols="12" lg="6" class="d-none d-lg-flex align-center justify-center bg-light">
           <div class="text-center">
             <div class="illustration-container mb-4">
@@ -29,7 +28,6 @@
           </div>
         </v-col>
 
-        <!-- Right side - Register Form -->
         <v-col cols="12" lg="6" class="d-flex align-center justify-center">
           <div class="register-form-container">
             <div class="text-center mb-4">
@@ -40,9 +38,7 @@
               <p class="text-muted">Regístrate en ADWEB Online</p>
             </div>
 
-            <!-- Register Form -->
             <v-form @submit.prevent="handleRegister" class="register-form">
-              <!-- Name Field -->
               <v-text-field
                 v-model="formData.name"
                 label="Nombre Completo"
@@ -53,7 +49,6 @@
                 required
               />
 
-              <!-- Email Field -->
               <v-text-field
                 v-model="formData.email"
                 label="Correo Electrónico"
@@ -65,7 +60,6 @@
                 required
               />
 
-              <!-- Password Field -->
               <v-text-field
                 v-model="formData.password"
                 :type="showPassword ? 'text' : 'password'"
@@ -80,7 +74,6 @@
                 required
               />
 
-              <!-- Confirm Password Field -->
               <v-text-field
                 v-model="formData.confirmPassword"
                 :type="showConfirmPassword ? 'text' : 'password'"
@@ -94,7 +87,6 @@
                 required
               />
 
-              <!-- Terms and Conditions -->
               <v-checkbox
                 v-model="formData.acceptTerms"
                 :error="!!errors.acceptTerms"
@@ -104,7 +96,6 @@
                 required
               />
 
-              <!-- Submit Button -->
               <v-btn
                 type="submit"
                 color="primary"
@@ -116,17 +107,14 @@
                 {{ isLoading ? 'Creando cuenta...' : 'Crear Cuenta' }}
               </v-btn>
 
-              <!-- Error Message -->
               <v-alert v-if="generalError" type="error" variant="tonal" class="mb-3">
                 {{ generalError }}
               </v-alert>
 
-              <!-- Success Message -->
               <v-alert v-if="successMessage" type="success" variant="tonal" class="mb-3">
                 {{ successMessage }}
               </v-alert>
 
-              <!-- Login Link -->
               <div class="text-center">
                 <p class="mb-0">
                   ¿Ya tienes una cuenta?
@@ -144,6 +132,7 @@
 </template>
 
 <script>
+// ... (script content is unchanged)
 import { useAuthStore } from '@/stores/authStore'
 
 export default {
@@ -267,15 +256,19 @@ export default {
 
 <style scoped>
 .register-container {
+  /* Cambio a un gradiente más suave (tonos pastel de azul/lila) */
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #a3c4f3 0%, #b2a3f3 100%);
+  height: 100vh;
+  display: flex;
+  align-items: center;
 }
 
 .register-form-container {
   background: white;
   padding: 3rem;
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Sombra más sutil */
   width: 100%;
   max-width: 500px;
 }
@@ -288,16 +281,6 @@ export default {
   animation: fadeInUp 0.8s ease-out;
 }
 
-.form-control {
-  border-radius: 12px;
-  border: 2px solid #e9ecef;
-  transition: all 0.3s ease;
-}
-
-.form-control:focus {
-  border-color: #667eea;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
 
 .btn-primary {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -313,11 +296,6 @@ export default {
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
-.btn-outline-secondary {
-  border-radius: 0 12px 12px 0;
-  border-left: none;
-}
-
 .illustration-container {
   animation: float 3s ease-in-out infinite;
 }
@@ -325,10 +303,6 @@ export default {
 .feature-item {
   font-size: 1.1rem;
   font-weight: 500;
-}
-
-.form-check-input.is-invalid {
-  border-color: #dc3545;
 }
 
 @keyframes fadeInDown {
@@ -369,6 +343,7 @@ export default {
   }
   
   .register-container {
+    /* Fondo blanco en móvil para mejor contraste con la tarjeta */
     background: white;
   }
 }
@@ -381,10 +356,10 @@ export default {
   }
 }
   
-  /* Centrado vertical total */
-  .register-container {
-    height: 100vh; /* asegura altura completa del viewport */
+  /* Centrado vertical total (ya estaba bien definido) */
+  /* .register-container {
+    height: 100vh;
     display: flex;
-    align-items: center; /* centra verticalmente el contenido */
-  }
+    align-items: center;
+  } */
 </style>
