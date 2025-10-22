@@ -9,7 +9,7 @@
       </div>
 
       <AdminCoursesManager
-        v-if="isAdmin"
+        v-if="role === isAdmin"
         :courses="courses"
         @courses-change="courses"
       />
@@ -55,11 +55,13 @@ export default {
 
     // 3. Obtener datos desde los stores
     const courses = computed(() => coursesStore.getCourses);
+    const role = computed(() => authStore.role);
     const isAdmin = computed(() => authStore.isAdmin);
     const currentEmail = computed(() => authStore.currentUserEmail);
 
     return {
       // Datos de usuario desde authStore
+      role,
       isAdmin,
       currentEmail,
       // Datos de Pinia Store (reactivos)
