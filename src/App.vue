@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <NavBar v-if="showNavBar" />
-    <v-main :class="{ 'with-navbar': showNavBar }">
+    <v-main>
       <RouterView />
     </v-main>
   </v-app>
@@ -29,55 +29,40 @@ export default {
 }
 </script>
 
-
 <style>
-/* Estilos globales */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* * ATENCIÓN: Se eliminó todo el CSS global (*, body, #app, main)
+ * que entraba en conflicto con el reset de Vuetify.
+ * El v-app/v-main ahora controlan el layout y el fondo.
+*/
 
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.6;
-  color: #333;
-  background-color: #f8f9fa;
-}
-
-#app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-main.with-navbar {
-  padding-top: 0;
-}
-
-/* Utilidades de Bootstrap personalizadas */
+/* UTILIDADES Y HELPERS DE COLOR (MANTENER SOLO SI SON ABSOLUTAMENTE NECESARIOS) */
 .text-gradient {
+  /* Se mantiene el gradiente de texto, ya que Vuetify no lo ofrece por defecto. */
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.shadow-custom {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+/* SCROLLBAR PERSONALIZADO (No conflictivo, se mantiene) */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
-.border-radius-custom {
-  border-radius: 15px;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-/* Animaciones globales */
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* ANIMACIONES GLOBALES (Se mantienen, si se usan en RouterView) */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -101,45 +86,21 @@ main.with-navbar {
   transform: translateX(100%);
 }
 
-/* Responsive utilities */
-@media (max-width: 768px) {
-  .container {
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-}
 
-/* Scrollbar personalizado */
-::-webkit-scrollbar {
-  width: 8px;
-}
+/* Estados Focus, Shadows, Radius, Containers (¡ELIMINADOS!) */
+/* Usa las clases y componentes de Vuetify en su lugar:
+ * - Sombras: Usa clases como `elevation-5`.
+ * - Radio: Usa `rounded` o `rounded-xl`.
+ * - Focus: Vuetify maneja el focus en sus componentes (v-btn, v-text-field).
+ * - Responsive: Usa `<v-container>`, `<v-row>`, `<v-col>` y sus props.
+*/
 
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
-}
-
-/* Focus states mejorados */
-.form-control:focus,
-.btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-}
-
-/* Loading spinner personalizado */
+/* Spinner (Mantener si no se usa el v-progress-circular de Vuetify) */
 .spinner-custom {
   width: 20px;
   height: 20px;
   border: 2px solid #f3f3f3;
-  border-top: 2px solid #667eea;
+  border-top: 2px solid #667eea; /* Color secundario de tu tema */
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -148,8 +109,8 @@ main.with-navbar {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-</style>
-/* Blur y oscurecer fondo cuando hay modal abierto */
+
+/* Blur para modal (Se mantiene, es un helper para un estado global) */
 body.modal-open main {
   filter: blur(3px);
 }
@@ -157,3 +118,4 @@ body.modal-open main {
 .modal-backdrop.show {
   opacity: 0.5;
 }
+</style>
