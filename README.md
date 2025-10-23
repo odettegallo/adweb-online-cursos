@@ -1,38 +1,27 @@
-# ADWEB-ONLINE-CURSOS
+Plataforma de Cursos en Línea (ADWEB)
+📚 Descripción General del Proyecto
+Este repositorio contiene el código fuente de una Plataforma Web para Cursos en Línea, desarrollada como proyecto de la asignatura Aplicaciones para el Desarrollo Web (ADWEB).
 
-This template should help get you started developing with Vue 3 in Vite.
+El objetivo principal de esta aplicación es proporcionar un entorno robusto y escalable que facilite la gestión de contenido educativo, la inscripción de usuarios y el seguimiento del progreso de los estudiantes en diversos cursos.
 
-## Recommended IDE Setup
+La plataforma está diseñada con una arquitectura de múltiples roles para asegurar una separación clara de responsabilidades y funcionalidades.
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+✨ Características Principales
+Gestión de Cursos: Creación, edición y eliminación de cursos, módulos y lecciones.
 
-## Recommended Browser Setup
+Múltiples Roles de Usuario: Diferenciación clara entre Administradores y Usuarios (Estudiantes).
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+Panel de Administración: Interfaz dedicada para la gestión del sitio, usuarios y contenido.
 
-## Customize configuration
+Registro e Inicio de Sesión: Sistema seguro de autenticación de usuarios.
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+Inscripción a Cursos: Los usuarios pueden matricularse en los cursos disponibles.
 
-## Project Setup
+Seguimiento de Progreso: Posibilidad de marcar lecciones como completadas.
 
-```sh
-npm install
-```
+🔑 Credenciales de Acceso: Administrador y Usuario
+Para el correcto funcionamiento y la realización de pruebas en la plataforma, existen dos roles principales con diferentes niveles de acceso: Administrador y Usuario Estándar.
 
-### Compile and Hot-Reload for Development
-
-```sh
-npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+Rol	Funcionalidad Principal	Acciones Permitidas
+ADMINISTRADOR	Gestión total de la plataforma.	Crear, editar, eliminar cursos, gestionar usuarios, acceder a estadísticas.
+USUARIO ESTÁNDAR	Consumo del contenido educativo.	Registrarse, iniciar sesión, inscribirse a cursos, visualizar lecciones, marcar progreso.
