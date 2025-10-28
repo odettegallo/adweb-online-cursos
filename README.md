@@ -116,6 +116,6 @@ Puedes usar, modificar y distribuir el código libremente, siempre que mantengas
 
 ## 📧 Contacto
 
-**Bootcamp Aplicaciones Front End Trainee 2025**  
+**Bootcamp Aplicaciones Front End Trainee 2025: Proyecto Final Módulo 7**  
 📬 odettegallo@outlook.es
 ```
