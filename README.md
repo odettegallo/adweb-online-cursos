@@ -73,3 +73,49 @@ Para el correcto funcionamiento y las pruebas en la plataforma, existen dos role
     npm run dev
     ```
     La aplicación estará disponible en http://localhost:5173/ (o el puerto que indique la terminal).
+
+
+## ✍️ Contribución
+
+¡Gracias por tu interés en contribuir! Para hacerlo, sigue estos pasos:
+
+1. Haz un Fork del repositorio.
+2. Crea una rama:
+   ```bash
+   git checkout -b feature/nueva-funcionalidad
+   ```
+3. Realiza tus cambios y haz un commit:
+   ```bash
+   git commit -m 'feat: Añadir X'
+   ```
+4. Sube tus cambios:
+   ```bash
+   git push origin feature/nueva-funcionalidad
+   ```
+5. Abre un Pull Request desde tu rama hacia la rama principal del proyecto.
+
+---
+
+## 🤝 Contribuyentes
+
+Agradecemos a las siguientes personas por su valiosa participación en el desarrollo de este proyecto:
+
+- **Antonio Eliash** — Rol: *Vistas de Bootstrap / Vistas de VUE / Tests*
+- **José Huerta** — Rol: *Lógica de Pinia / Router / Configuración de Stores / Vuetify / Vistas de VUE*
+- **Odette Gallo** — Rol: *Componentes / Configuración de Firebase & Firestore / Deploy*
+
+
+---
+
+## 📄 Licencia
+
+Este proyecto está bajo la licencia **MIT**.
+Puedes usar, modificar y distribuir el código libremente, siempre que mantengas el aviso de copyright.
+
+---
+
+## 📧 Contacto
+
+**Bootcamp Aplicaciones Front End Trainee 2025**  
+📬 odettegallo@outlook.es
+```
